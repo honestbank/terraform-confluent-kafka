@@ -1,4 +1,4 @@
-name: "Semantic Pull Request"
+name: "Semantic PR Repository Workflow"
 
 on:
   pull_request:
@@ -9,10 +9,6 @@ on:
 
 jobs:
   main:
-    name: Semantic Pull Request
-    runs-on: ubuntu-latest
-    steps:
-      - uses: amannn/action-semantic-pull-request@v4
-        name: Semantic Pull Request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    name: semantic-pull-request-repository-job
+    uses: honestbank/workflows/.github/workflows/general-semantic-pr.yaml@main
+    secrets: inherit

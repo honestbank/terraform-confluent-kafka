@@ -10,6 +10,8 @@ env:
   tf_version: "latest"
   tf_working_dir: "."
   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_READ_ALL_PROJECTS }}
+  GITHUB_TOKEN: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
+
 jobs:
   terraform:
     name: "terraform"
@@ -24,22 +26,24 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
       - name: Terraform Format
         id: fmt
-        run: terraform fmt
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
+        run: cd example/create-env-cluster-topics/;terraform fmt
+
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: cd example/create-env-cluster-topics/;terraform init
+
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: cd example/create-env-cluster-topics/;terraform validate -no-color
+
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: cd example/create-env-cluster-topics/;terraform plan -no-color
         continue-on-error: true
+
       - uses: actions/github-script@v4
         if: github.event_name == 'pull_request'
         env:
@@ -51,12 +55,6 @@ jobs:
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖${{ steps.validate.outputs.stdout }}
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-
-            <details><summary>Show Plan</summary>
-
-            \`\`\`${process.env.PLAN}\`\`\`
-
-            </details>
 
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
