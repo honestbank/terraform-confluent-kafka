@@ -11,7 +11,8 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_honest_env"></a> [honest\_env](#module\_honest\_env) | ../../modules/environment | n/a |
+| <a name="module_honest_labs_environment"></a> [honest\_labs\_environment](#module\_honest\_labs\_environment) | ../../modules/environment | n/a |
+| <a name="module_honest_labs_kafka_cluster_basic"></a> [honest\_labs\_kafka\_cluster\_basic](#module\_honest\_labs\_kafka\_cluster\_basic) | ../../modules/kafka_cluster | n/a |
 
 ## Resources
 
@@ -30,4 +31,6 @@ No resources.
 |------|-------------|
 | <a name="output_environment_id"></a> [environment\_id](#output\_environment\_id) | n/a |
 | <a name="output_environment_name"></a> [environment\_name](#output\_environment\_name) | n/a |
+| <a name="output_kafka_cluster_basic_bootstrap_endpoint"></a> [kafka\_cluster\_basic\_bootstrap\_endpoint](#output\_kafka\_cluster\_basic\_bootstrap\_endpoint) | n/a |
+| <a name="output_kafka_cluster_basic_name"></a> [kafka\_cluster\_basic\_name](#output\_kafka\_cluster\_basic\_name) | n/a |
 <!-- END_TF_DOCS -->
