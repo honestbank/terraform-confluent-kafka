@@ -3,7 +3,7 @@ output "service_account_id" {
 }
 
 output "service_account_api_version" {
-  value = confluent_service_account.service_account.api_key
+  value = confluent_service_account.service_account.api_version
 }
 
 output "service_account_kind" {

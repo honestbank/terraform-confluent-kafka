@@ -13,8 +13,10 @@ provider "confluent" {
 
 provider "confluent" {
   alias               = "admin"
-  kafka_api_key       = module.honest_labs_service_account_admin.service_account_kafka_api_key
-  kafka_api_secret    = module.honest_labs_service_account_admin.service_account_kafka_api_secret
+  kafka_api_key       = module.admin-privilege-service-account.kafka_api_key
+  kafka_api_secret    = module.admin-privilege-service-account.kafka_api_secret
   kafka_rest_endpoint = module.honest_labs_kafka_cluster_basic.rest_endpoint
+  cloud_api_key       = module.admin-privilege-service-account.cloud_api_key
+  cloud_api_secret    = module.admin-privilege-service-account.cloud_api_secret
 }
 
