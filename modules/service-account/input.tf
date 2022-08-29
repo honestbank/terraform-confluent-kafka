@@ -1,6 +1,17 @@
 variable "service_account_name" {
   type        = string
   description = "The name of the service account"
+
+  validation {
+    condition     = length(var.service_account_name) < 65
+    error_message = "The Service acocunt name cannot be longer than 64 charaters"
+  }
+
+  validation {
+    condition     = length(var.service_account_name) > 0
+    error_message = "The service account name cannot be empty, currently set to an empty string."
+  }
+
 }
 
 variable "cluster_id" {
