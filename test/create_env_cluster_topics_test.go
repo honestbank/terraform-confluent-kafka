@@ -2,13 +2,14 @@ package test
 
 import (
 	"fmt"
+	"os"
+	"strings"
+	"testing"
+
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"strings"
-	"testing"
 )
 
 func TestEnvClusterTopic(t *testing.T) {
@@ -30,6 +31,8 @@ func TestEnvClusterTopic(t *testing.T) {
 		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET not set")
 		os.Exit(1)
 	}
+
+	fmt.Printf("Got confluent credentials. Key/secret lengths %d/%d", len(cloudAPIKey), len(cloudAPISecret))
 
 	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
 		a := assert.New(t)
