@@ -1,20 +1,15 @@
-name: "Checkov"
+name: "Checkov Repository Workflow"
+
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
-  checkov:
-    name: checkov-internal-job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-          token: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
-      - name: Run Checkov
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          quiet: true # optional: display only failed checks
+  main:
+    name: checkov-repository-job
+    uses: honestbank/workflows/.github/workflows/checkov.yaml@main
+    secrets: inherit
