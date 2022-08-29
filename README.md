@@ -23,3 +23,29 @@ that is configured to produce releases on merge to `main`.
 
 This template contains [a 'terraform' action/workflow](./.github/workflows/terraform.yml) that is configured to run on
 PRs and pushes to `main` and is designed around a [Trunk-Based Development](https://trunkbaseddevelopment.com) workflow.
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+No requirements.
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

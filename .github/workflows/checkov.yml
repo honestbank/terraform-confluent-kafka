@@ -1,10 +1,10 @@
-name: "Checkov GitHub Action"
+name: "checkov"
 on:
   pull_request:
-    branches: [test, dev, qa, prod, main]
+    branches: [main]
 
 jobs:
-  checkov:
+  checkov-internal-job:
     name: checkov
     runs-on: ubuntu-latest
     steps:
