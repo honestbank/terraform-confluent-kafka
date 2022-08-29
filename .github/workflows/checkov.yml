@@ -5,7 +5,7 @@ on:
 
 jobs:
   checkov:
-    name: checkov
+    name: checkov-internal-job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
