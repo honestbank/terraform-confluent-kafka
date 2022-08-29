@@ -29,17 +29,17 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: cd example/create-env-cluster-topics/;terraform fmt
+        run: cd examples/create-env-cluster-topics/;terraform fmt
 
       - name: Terraform Init
         id: init
-        run: cd example/create-env-cluster-topics/;terraform init
+        run: cd examples/create-env-cluster-topics/;terraform init
 
       - name: Terraform Validate
         id: validate
-        run: cd example/create-env-cluster-topics/;terraform validate -no-color
+        run: cd examples/create-env-cluster-topics/;terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
-        run: cd example/create-env-cluster-topics/;terraform plan -no-color
+        run: cd examples/create-env-cluster-topics/;terraform plan -no-color
         continue-on-error: true
