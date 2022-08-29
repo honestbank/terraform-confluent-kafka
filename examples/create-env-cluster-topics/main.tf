@@ -21,7 +21,7 @@ module "honest_labs_kafka_cluster_basic" {
 module "admin-privilege-service-account" {
   source = "../../modules/cluster-admin"
 
-  admin_service_account_name = "admin-sa"
+  admin_service_account_name = "admin-sa-${random_id.suffix.hex}"
   cluster_api_version        = module.honest_labs_kafka_cluster_basic.cluster_api_version
   cluster_id                 = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   cluster_kind               = module.honest_labs_kafka_cluster_basic.cluster_kind
