@@ -4,7 +4,7 @@ on:
     branches: [main]
 
 jobs:
-  checkov:
+  checkov-internal-job:
     name: checkov-internal-job
     runs-on: ubuntu-latest
     steps:
