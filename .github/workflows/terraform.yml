@@ -43,24 +43,3 @@ jobs:
         id: plan
         run: cd example/create-env-cluster-topics/;terraform plan -no-color
         continue-on-error: true
-
-      - uses: actions/github-script@v4
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖${{ steps.validate.outputs.stdout }}
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
