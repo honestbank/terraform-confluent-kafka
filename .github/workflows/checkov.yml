@@ -4,7 +4,7 @@ on:
     branches: [main]
 
 jobs:
-  checkov-internal-job:
+  checkov:
     name: checkov-internal-job
     runs-on: ubuntu-latest
     steps:
@@ -17,5 +17,4 @@ jobs:
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
-          download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
-          quiet: true # optional: display only failed checks
+          config_file: ".checkov.yaml"
