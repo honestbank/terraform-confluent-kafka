@@ -49,5 +49,5 @@ module "honest_labs_kafka_topic" {
   consumer_prefix    = "honest_consumer_"
   service_account_id = module.honest_labs_topic_service_account.service_account_id
   topic_name         = "squad-raw.service-example.entity"
-  depends_on = [module.admin-privilege-service-account]
+  depends_on         = [module.admin-privilege-service-account]
 }

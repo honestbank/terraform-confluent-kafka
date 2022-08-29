@@ -9,7 +9,7 @@ variable "environment_resource_name" {
 }
 
 variable "admin_service_account_name" {
-  type = string
+  type        = string
   description = "The name of the admin service account"
 }
 

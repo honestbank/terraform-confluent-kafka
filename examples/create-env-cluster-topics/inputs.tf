@@ -10,6 +10,6 @@ variable "confluent_cloud_api_secret" {
 }
 
 variable "environment" {
-  type = string
+  type        = string
   description = "Environment/stage"
 }

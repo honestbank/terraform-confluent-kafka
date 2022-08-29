@@ -19,7 +19,7 @@ output "topic_service_account_key" {
 }
 
 output "topic_service_account_secret" {
-  value = module.honest_labs_topic_service_account.service_account_kafka_api_secret
+  value     = module.honest_labs_topic_service_account.service_account_kafka_api_secret
   sensitive = true
 }
 

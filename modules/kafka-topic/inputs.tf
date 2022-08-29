@@ -26,18 +26,18 @@ variable "retention_ms" {
 }
 
 variable "delete_policy" {
-  type = string
+  type        = string
   description = "Delete policy, available values: delete or compact"
-  default = "delete"
+  default     = "delete"
 }
 
 variable "max_message_bytes" {
-  type = string
+  type        = string
   description = "Maximum size of a message in bytes"
-  default = "2097164"
+  default     = "2097164"
 }
 
 variable "consumer_prefix" {
-  type = string
+  type        = string
   description = "The prefix of the consumer group, by default"
 }
