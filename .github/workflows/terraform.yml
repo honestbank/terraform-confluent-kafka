@@ -38,8 +38,3 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: cd examples/create-env-cluster-topics/;terraform validate -no-color
-
-      - name: Terraform Plan
-        id: plan
-        run: cd examples/create-env-cluster-topics/;terraform plan -no-color
-        continue-on-error: true
