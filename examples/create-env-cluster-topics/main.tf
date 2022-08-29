@@ -37,7 +37,7 @@ module "honest_labs_topic_service_account" {
   cluster_id           = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   cluster_kind         = module.honest_labs_kafka_cluster_basic.cluster_kind
   environment_id       = module.honest_labs_environment.environment_id
-  service_account_name = "topic-service-account-${module.honest_labs_kafka_cluster_basic.kafka_cluster_name}"
+  service_account_name = "topic-sa-${module.honest_labs_kafka_cluster_basic.kafka_cluster_name}"
 
   depends_on = [module.admin-privilege-service-account]
 }
