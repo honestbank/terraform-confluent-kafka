@@ -1,14 +1,15 @@
 ---
 # This workflow integrates ShiftLeft NG SAST with GitHub
 # Visit https://docs.shiftleft.io for help
-name: shiftleft-terraform
+name: shiftleft
 
 on:
   pull_request:
   workflow_dispatch:
 
 jobs:
-  shiftleft-terraform:
+  shiftleft-terraform-internal-job:
+    name: "shiftleft-terraform-internal-job"
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
