@@ -3,16 +3,10 @@ name: "Shiftleft (Terraform) Repository Workflow"
 on:
   pull_request:
     branches:
-      - test
-      - dev
-      - qa
-      - prod
+      - main
   push:
     branches:
-      - test
-      - dev
-      - qa
-      - prod
+      - main
 
 jobs:
   main:
