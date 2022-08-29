@@ -1,4 +1,4 @@
-name: "Checkov Repository Workflow"
+name: "Checkov [Honest Internal Workflow]"
 
 on:
   pull_request:
@@ -10,6 +10,6 @@ on:
 
 jobs:
   main:
-    name: checkov-repository-job
+    name: "checkov-internal-job"
     uses: honestbank/workflows/.github/workflows/checkov.yaml@main
     secrets: inherit
