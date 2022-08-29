@@ -57,7 +57,7 @@ func TestEnvClusterTopic(t *testing.T) {
 		var output string
 
 		output = terraform.Output(t, runOptions, "environment_name")
-		a.True(strings.Contains(output, "test"))
+		a.True(strings.Contains(output, "honest-labs-test"))
 
 		output = terraform.Output(t, runOptions, "environment_id")
 		a.NotEmpty(output)
