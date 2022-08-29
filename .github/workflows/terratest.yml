@@ -13,6 +13,8 @@ env:
   TF_VAR_google_project: ${{ secrets.TERRATEST_GOOGLE_PROJECT }}
   TF_VAR_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
   TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
+  TERRATEST_CONFLUENT_CLOUD_SEED_KEY: ${{ secrets.TERRATEST_CONFLUENT_CLOUD_SEED_KEY }}
+  TERRATEST_CONFLUENT_CLOUD_SEED_SECRET: ${{ secrets.TERRATEST_CONFLUENT_CLOUD_SEED_SECRET }}
 jobs:
   terratest:
     name: terratest
