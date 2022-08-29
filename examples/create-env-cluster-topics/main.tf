@@ -1,14 +1,19 @@
+# Random bucket suffix
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 module "honest_labs_environment" {
   source = "../../modules/environment"
 
-  environment_name = "honest-labs-${var.environment}"
+  environment_name = "honest-labs-${var.environment}-${random_id.suffix.hex}"
 }
 
 module "honest_labs_kafka_cluster_basic" {
   source = "../../modules/kafka-cluster"
 
   environment_id     = module.honest_labs_environment.environment_id
-  kafka_cluster_name = "kafka-labs-1-basic"
+  kafka_cluster_name = "kafka-labs-1-basic-${random_id.suffix.hex}"
 
   cluster_for_production = false
 }
