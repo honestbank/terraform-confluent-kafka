@@ -1,4 +1,4 @@
-name: "Checkov GitHub Action"
+name: "Checkov"
 on:
   pull_request:
     branches: [ main ]
