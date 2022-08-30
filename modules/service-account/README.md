@@ -12,7 +12,6 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_confluent"></a> [confluent](#provider\_confluent) | >= 1.2.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | >= 3.1.2 |
 
 ## Modules
 
@@ -24,7 +23,6 @@ No modules.
 |------|------|
 | [confluent_api_key.service_account_kafka_api_key](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/api_key) | resource |
 | [confluent_service_account.service_account](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/service_account) | resource |
-| [random_id.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
 ## Inputs
 

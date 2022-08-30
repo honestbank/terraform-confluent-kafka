@@ -5,7 +5,6 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
 | <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | >= 1.2.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.1.2 |
 
 ## Providers
 
@@ -41,5 +40,7 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_topic_name"></a> [topic\_name](#output\_topic\_name) | n/a |
 <!-- END_TF_DOCS -->

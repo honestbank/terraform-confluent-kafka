@@ -5,14 +5,12 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
 | <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | >= 1.2.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.1.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_confluent"></a> [confluent](#provider\_confluent) | >= 1.2.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | >= 3.1.2 |
 
 ## Modules
 
@@ -22,9 +20,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [confluent_kafka_cluster.basic](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_cluster) | resource |
-| [confluent_kafka_cluster.standard](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_cluster) | resource |
-| [random_id.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+| [confluent_kafka_cluster.cluster](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_cluster) | resource |
 
 ## Inputs
 
