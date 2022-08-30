@@ -1,6 +1,11 @@
+# Random bucket suffix
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 resource "confluent_service_account" "service_account" {
-  display_name = var.service_account_name
-  description  = "Service Account for ${var.service_account_name}"
+  display_name = "${var.service_account_name}-${random_id.suffix.hex}"
+  description  = "Service Account with prefix ${var.service_account_name}"
 }
 
 resource "confluent_api_key" "service_account_kafka_api_key" {
