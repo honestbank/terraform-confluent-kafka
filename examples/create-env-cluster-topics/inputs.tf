@@ -12,4 +12,11 @@ variable "confluent_cloud_api_secret" {
 variable "environment" {
   type        = string
   description = "Environment/stage"
+  default     = "local"
+}
+
+variable "google_credentials" {
+  type        = string
+  sensitive   = true
+  description = "Google Credentials JSON"
 }

@@ -28,5 +28,9 @@ output "topic_service_account_id" {
 }
 
 output "kafka_topic_name" {
-  value = module.honest_labs_kafka_topic.topic_name
+  value = module.honest_labs_kafka_topic_example_1.topic_name
+}
+
+output "bigquery_connector_id" {
+  value = module.honest_labs_connector_bigquery.connector_id
 }

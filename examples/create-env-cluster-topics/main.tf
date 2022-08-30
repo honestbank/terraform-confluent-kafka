@@ -37,7 +37,7 @@ module "honest_labs_topic_service_account" {
   depends_on = [module.admin_privilege_service_account]
 }
 
-module "honest_labs_kafka_topic" {
+module "honest_labs_kafka_topic_example_1" {
   source = "../../modules/kafka-topic"
 
   // we change to admin kafka api key to create kafka topics.
@@ -48,6 +48,57 @@ module "honest_labs_kafka_topic" {
   cluster_id         = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   consumer_prefix    = "honest_consumer_"
   service_account_id = module.honest_labs_topic_service_account.service_account_id
-  topic_name         = "squad-raw.service-example.entity"
+  topic_name         = "squad-raw.service-example-1.entity"
   depends_on         = [module.admin_privilege_service_account]
+}
+
+module "honest_labs_kafka_topic_example_2" {
+  source = "../../modules/kafka-topic"
+
+  // we change to admin kafka api key to create kafka topics.
+  providers = {
+    confluent = confluent.admin
+  }
+
+  cluster_id         = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  consumer_prefix    = "honest_consumer_"
+  service_account_id = module.honest_labs_topic_service_account.service_account_id
+  topic_name         = "squad-raw.service-example-2.entity"
+  depends_on         = [module.admin_privilege_service_account]
+}
+
+locals {
+  topics = [
+    module.honest_labs_kafka_topic_example_1.topic_name,
+    module.honest_labs_kafka_topic_example_2.topic_name,
+  ]
+}
+module "honest_labs_connector_bigquery" {
+  source = "../../modules/connector"
+
+  environment_id = module.honest_labs_environment.environment_id
+  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+
+  config_nonsensitive = {
+    "name" : "confluent-bigquery-sink-test-labs",
+    "connector.class" : "BigQuerySink",
+    "topics" : join(",", local.topics),
+    "kafka.auth.mode" : "KAFKA_API_KEY",
+    "project" : "storage-0994",
+    "datasets" : "test_poom_bq",
+    "input.data.format" : "AVRO",
+    "auto.create.tables" : "true",
+    "sanitize.topics" : "true",
+    "auto.update.schemas" : "true",
+    "sanitize.field.names" : "true",
+    "tasks.max" : "1",
+    "partitioning.type" : "NONE",
+    #    "kafka.service.account.id" : module.admin_privilege_service_account.admin_service_account_id,
+  }
+
+  config_sensitive = {
+    "keyfile" : var.google_credentials,
+    "kafka.api.key" : module.honest_labs_topic_service_account.service_account_kafka_api_key,
+    "kafka.api.secret" : module.honest_labs_topic_service_account.service_account_kafka_api_secret,
+  }
 }

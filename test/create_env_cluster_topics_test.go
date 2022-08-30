@@ -44,7 +44,7 @@ func TestEnvClusterTopic(t *testing.T) {
 				TerraformDir: workingDir,
 				EnvVars:      map[string]string{},
 				Vars: map[string]interface{}{
-					"environment":                "test",
+					"environment":                runID,
 					"confluent_cloud_api_key":    cloudAPIKey,
 					"confluent_cloud_api_secret": cloudAPISecret,
 				},
@@ -57,7 +57,7 @@ func TestEnvClusterTopic(t *testing.T) {
 		var output string
 
 		output = terraform.Output(t, runOptions, "environment_name")
-		a.True(strings.Contains(output, "honest-labs-test"))
+		a.True(strings.Contains(output, "honest-labs-"+runID))
 
 		output = terraform.Output(t, runOptions, "environment_id")
 		a.NotEmpty(output)
@@ -69,6 +69,9 @@ func TestEnvClusterTopic(t *testing.T) {
 		a.NotEmpty(output)
 
 		output = terraform.Output(t, runOptions, "kafka_topic_name")
-		a.Equal(output, "squad-raw.service-example.entity")
+		a.Equal(output, "squad-raw.service-example-1.entity")
+
+		output = terraform.Output(t, runOptions, "bigquery_connector_id")
+		a.NotEmpty(output)
 	})
 }
