@@ -1,10 +1,5 @@
-# Random suffix
-resource "random_id" "suffix" {
-  byte_length = 4
-}
-
 resource "confluent_service_account" "admin" {
-  display_name = "${var.admin_service_account_name}-${random_id.suffix.hex}"
+  display_name = var.admin_service_account_name
   description  = "Admin service account"
 }
 

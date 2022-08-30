@@ -3,13 +3,8 @@ locals {
   build_cluster_type_standard = var.cluster_for_production ? ["yes"] : []
 }
 
-# Random suffix
-resource "random_id" "suffix" {
-  byte_length = 4
-}
-
 resource "confluent_kafka_cluster" "cluster" {
-  display_name = "${var.kafka_cluster_name}-${random_id.suffix.hex}"
+  display_name = var.kafka_cluster_name
   availability = var.availability
   cloud        = var.cloud
   region       = var.region
