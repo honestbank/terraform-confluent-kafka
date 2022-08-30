@@ -1,18 +1,14 @@
-resource "random_id" "suffix" {
-  byte_length = 4
-}
-
 module "honest_labs_environment" {
   source = "../../modules/environment"
 
-  environment_name = "honest-labs-${var.environment}-${random_id.suffix.hex}"
+  environment_name = "honest-labs-${var.environment}"
 }
 
 module "honest_labs_kafka_cluster_basic" {
   source = "../../modules/kafka-cluster"
 
   environment_id     = module.honest_labs_environment.environment_id
-  kafka_cluster_name = "kafka-labs-1-basic-${random_id.suffix.hex}"
+  kafka_cluster_name = "kafka-labs-1-basic"
 
   cluster_for_production = false
 }
@@ -20,7 +16,7 @@ module "honest_labs_kafka_cluster_basic" {
 module "admin_privilege_service_account" {
   source = "../../modules/cluster-admin"
 
-  admin_service_account_name = "admin-sa-${random_id.suffix.hex}"
+  admin_service_account_name = "admin-sa"
   cluster_api_version        = module.honest_labs_kafka_cluster_basic.cluster_api_version
   cluster_id                 = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   cluster_kind               = module.honest_labs_kafka_cluster_basic.cluster_kind
