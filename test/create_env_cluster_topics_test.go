@@ -150,7 +150,6 @@ func consumeKafkaMessage(consumer *kafka.Consumer, topic string) bool {
 			message, err := consumer.ReadMessage(100 * time.Millisecond)
 			if err == nil {
 				fmt.Println(message)
-				//err := deser.DeserializeInto(*message.TopicPartition.Topic, message.Value, &received)
 				if err != nil {
 					fmt.Printf("Failed to deserialize payload: %s\n", err)
 				} else {
