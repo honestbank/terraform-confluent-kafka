@@ -2,10 +2,13 @@ package test
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
@@ -44,7 +47,7 @@ func TestEnvClusterTopic(t *testing.T) {
 				TerraformDir: workingDir,
 				EnvVars:      map[string]string{},
 				Vars: map[string]interface{}{
-					"environment":                "test",
+					"environment":                "terratest",
 					"confluent_cloud_api_key":    cloudAPIKey,
 					"confluent_cloud_api_secret": cloudAPISecret,
 				},
@@ -57,7 +60,7 @@ func TestEnvClusterTopic(t *testing.T) {
 		var output string
 
 		output = terraform.Output(t, runOptions, "environment_name")
-		a.True(strings.Contains(output, "honest-labs-test"))
+		a.True(strings.Contains(output, "honest-labs-terratest"))
 
 		output = terraform.Output(t, runOptions, "environment_id")
 		a.NotEmpty(output)
@@ -70,5 +73,89 @@ func TestEnvClusterTopic(t *testing.T) {
 
 		output = terraform.Output(t, runOptions, "kafka_topic_name")
 		a.Equal(output, "squad-raw.service-example.entity")
+
+		topicSAKey := terraform.Output(t, runOptions, "topic_service_account_key")
+		topicSASecret := terraform.Output(t, runOptions, "topic_service_account_secret")
+		bootstrap := terraform.Output(t, runOptions, "kafka_cluster_basic_bootstrap_endpoint")
+		topicName := terraform.Output(t, runOptions, "kafka_topic_name")
+
+		producer := newKafkaProducer(topicSAKey, topicSASecret, bootstrap)
+		produceKafkaMessage(producer, topicName, []byte("hello world"))
+		producer.Close()
+
+		consumer := newKafkaConsumer(topicSAKey, topicSASecret, bootstrap, "honest_consumer_terratest")
+		a.True(consumeKafkaMessage(consumer, topicName))
+		err := consumer.Close()
+		if err != nil {
+			fmt.Printf(err.Error())
+			return
+		}
 	})
+}
+
+func newKafkaProducer(username string, password string, bootstrap string) *kafka.Producer {
+	producer, err := kafka.NewProducer(&kafka.ConfigMap{
+		"sasl.username":     username,
+		"sasl.password":     password,
+		"bootstrap.servers": bootstrap,
+		"sasl.mechanisms":   "PLAIN",
+		"security.protocol": "SASL_SSL",
+	})
+	if err != nil {
+		fmt.Printf("Failed to create producer: %s", err)
+		os.Exit(1)
+	}
+	return producer
+}
+
+func produceKafkaMessage(producer *kafka.Producer, topic string, message []byte) {
+	msg := &kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          message,
+	}
+	err := producer.Produce(msg, nil)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	fmt.Println(producer.Flush(3000))
+}
+
+func newKafkaConsumer(username string, password string, bootstrap string, consumerGroup string) *kafka.Consumer {
+	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
+		"sasl.username":            username,
+		"sasl.password":            password,
+		"bootstrap.servers":        bootstrap,
+		"sasl.mechanisms":          "PLAIN",
+		"security.protocol":        "SASL_SSL",
+		"session.timeout.ms":       6000,
+		"group.id":                 consumerGroup,
+		"auto.offset.reset":        "earliest",
+		"enable.auto.offset.store": false,
+		"broker.address.family":    "v4",
+	})
+	if err != nil {
+		fmt.Printf("Failed to create producer: %s", err)
+		os.Exit(1)
+	}
+	return consumer
+}
+
+func consumeKafkaMessage(consumer *kafka.Consumer, topic string) bool {
+	topics := []string{topic}
+	err := consumer.SubscribeTopics(topics, nil)
+	if err != nil {
+		log.Fatalln(err)
+		return false
+	}
+	for {
+		_, err := consumer.ReadMessage(100 * time.Millisecond)
+		if err == nil {
+			if err != nil {
+				fmt.Printf("Failed to deserialize payload: %s\n", err)
+			} else {
+				return true
+			}
+		}
+	}
 }

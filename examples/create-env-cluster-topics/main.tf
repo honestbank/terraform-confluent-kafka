@@ -8,7 +8,7 @@ module "honest_labs_kafka_cluster_basic" {
   source = "../../modules/kafka-cluster"
 
   environment_id     = module.honest_labs_environment.environment_id
-  kafka_cluster_name = "kafka-labs-1-basic"
+  kafka_cluster_name = "kafka-labs-1-basic-terratest"
 
   cluster_for_production = false
 }
@@ -16,7 +16,7 @@ module "honest_labs_kafka_cluster_basic" {
 module "admin_privilege_service_account" {
   source = "../../modules/cluster-admin"
 
-  admin_service_account_name = "admin-sa"
+  admin_service_account_name = "admin-sa-terratest"
   cluster_api_version        = module.honest_labs_kafka_cluster_basic.cluster_api_version
   cluster_id                 = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   cluster_kind               = module.honest_labs_kafka_cluster_basic.cluster_kind

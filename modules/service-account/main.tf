@@ -1,11 +1,11 @@
 resource "confluent_service_account" "service_account" {
   display_name = var.service_account_name
-  description  = "Service Account with prefix ${var.service_account_name}"
+  description  = "Service Account of cluster ${var.cluster_id} in environment ${var.environment_id}"
 }
 
 resource "confluent_api_key" "service_account_kafka_api_key" {
   display_name = "kafka-api-key-${confluent_service_account.service_account.display_name}"
-  description  = "Kafka API Key of topic service account ${confluent_service_account.service_account.display_name}"
+  description  = "Kafka API Key of topic service account of cluster ${var.cluster_id} in environment ${var.environment_id} "
   owner {
     id          = confluent_service_account.service_account.id
     api_version = confluent_service_account.service_account.api_version
