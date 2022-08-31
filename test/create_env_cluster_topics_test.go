@@ -20,12 +20,15 @@ func TestEnvClusterTopic(t *testing.T) {
 	clusterName := "test-cluster-" + runID
 
 	applyDestroyTestCaseName := "apply_destroy_" + clusterName
+
 	workingDir := ""
+
 	cloudAPIKey, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_SEED_KEY")
 	if !exist {
 		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_KEY not set")
 		os.Exit(1)
 	}
+
 	cloudAPISecret, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET")
 	if !exist {
 		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET not set")
@@ -33,6 +36,13 @@ func TestEnvClusterTopic(t *testing.T) {
 	}
 
 	fmt.Printf("Got confluent credentials. Key/secret lengths %d/%d", len(cloudAPIKey), len(cloudAPISecret))
+
+	GoogleCredentialsJSON, exist := os.LookupEnv("TERRATEST_GOOGLE_CREDENTIALS")
+	if !exist {
+		fmt.Println("TERRATEST_GOOGLE_CREDENTIALS not set")
+		os.Exit(1)
+	}
+	fmt.Printf("Got Google Credentials. lengths %d", len(GoogleCredentialsJSON))
 
 	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
 		a := assert.New(t)
@@ -47,6 +57,7 @@ func TestEnvClusterTopic(t *testing.T) {
 					"environment":                runID,
 					"confluent_cloud_api_key":    cloudAPIKey,
 					"confluent_cloud_api_secret": cloudAPISecret,
+					"google_credentials":         GoogleCredentialsJSON,
 				},
 			})
 		})
@@ -57,21 +68,19 @@ func TestEnvClusterTopic(t *testing.T) {
 		var output string
 
 		output = terraform.Output(t, runOptions, "environment_name")
-		a.True(strings.Contains(output, "honest-labs-"+runID))
+		a.True(strings.Contains(output, "labs-environment-"+runID))
 
 		output = terraform.Output(t, runOptions, "environment_id")
 		a.NotEmpty(output)
 
 		output = terraform.Output(t, runOptions, "kafka_cluster_basic_name")
-		a.True(strings.Contains(output, "kafka-labs-1-basic"))
+		a.True(strings.Contains(output, "labs-kafka-cluster-"))
 
 		output = terraform.Output(t, runOptions, "topic_service_account_key")
 		a.NotEmpty(output)
 
 		output = terraform.Output(t, runOptions, "kafka_topic_name")
-		a.Equal(output, "squad-raw.service-example-1.entity")
+		a.Equal(output, "squad_raw_service_example_1_entity")
 
-		output = terraform.Output(t, runOptions, "bigquery_connector_id")
-		a.NotEmpty(output)
 	})
 }
