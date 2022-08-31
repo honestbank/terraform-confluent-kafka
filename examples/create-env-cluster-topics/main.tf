@@ -73,7 +73,8 @@ locals {
     module.honest_labs_kafka_topic_example_2.topic_name,
   ]
 }
-module "honest_labs_connector_bigquery" {
+
+module "honest_labs_connector_bigquery_sink" {
   source = "../../modules/connector"
 
   environment_id = module.honest_labs_environment.environment_id
@@ -100,5 +101,31 @@ module "honest_labs_connector_bigquery" {
     "keyfile" : var.google_credentials,
     "kafka.api.key" : module.honest_labs_topic_service_account.service_account_kafka_api_key,
     "kafka.api.secret" : module.honest_labs_topic_service_account.service_account_kafka_api_secret,
+  }
+}
+
+module "honest_labs_connector_gcs_sink" {
+  source = "../../modules/connector"
+
+  environment_id = module.honest_labs_environment.environment_id
+  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+
+  config_nonsensitive = {
+    "topics" = join(",", local.topics),
+    "input.data.format" : "AVRO",
+    "connector.class" = "GcsSink"
+    "name" : "confluent-gcs-sink-test-labs",
+    "kafka.auth.mode"          = "SERVICE_ACCOUNT"
+    "kafka.service.account.id" = module.admin_privilege_service_account.admin_service_account_id
+    "gcs.bucket.name"          = "bucket-test"
+    "output.data.format"       = "JSON"
+    "time.interval"            = "HOURLY"
+    "flush.size"               = "1000"
+    "tasks.max"                = "1"
+    "gcs.credentials.config"   = var.google_credentials
+  }
+
+  config_sensitive = {
+    "gcs.credentials.config" = var.google_credentials
   }
 }
