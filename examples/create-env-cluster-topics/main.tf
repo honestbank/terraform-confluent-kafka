@@ -80,27 +80,27 @@ module "honest_labs_connector_bigquery_sink" {
   environment_id = module.honest_labs_environment.environment_id
   cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
 
+  connector_class     = "BigQuerySink"
+  connector_name      = "confluent-bigquery-sink-test-labs"
+  input_data_format   = "AVRO"
+  topics              = local.topics
+  kafka_auth_mode     = "KAFKA_API_KEY"
+  kafka_api_key       = module.honest_labs_topic_service_account.service_account_kafka_api_key
+  kafka_api_secret    = module.honest_labs_topic_service_account.service_account_kafka_api_secret
+  max_number_of_tasks = "1"
+
   config_nonsensitive = {
-    "name" : "confluent-bigquery-sink-test-labs",
-    "connector.class" : "BigQuerySink",
-    "topics" : join(",", local.topics),
-    "kafka.auth.mode" : "KAFKA_API_KEY",
-    "project" : "storage-0994",
-    "datasets" : "test_poom_bq",
-    "input.data.format" : "AVRO",
-    "auto.create.tables" : "true",
-    "sanitize.topics" : "true",
-    "auto.update.schemas" : "true",
-    "sanitize.field.names" : "true",
-    "tasks.max" : "1",
-    "partitioning.type" : "NONE",
-    #    "kafka.service.account.id" : module.admin_privilege_service_account.admin_service_account_id,
+    "project" : "storage-0994"
+    "datasets" : "test_poom_bq"
+    "auto.create.tables" : "true"
+    "sanitize.topics" : "true"
+    "auto.update.schemas" : "true"
+    "sanitize.field.names" : "true"
+    "partitioning.type" : "NONE"
   }
 
   config_sensitive = {
     "keyfile" : var.google_credentials,
-    "kafka.api.key" : module.honest_labs_topic_service_account.service_account_kafka_api_key,
-    "kafka.api.secret" : module.honest_labs_topic_service_account.service_account_kafka_api_secret,
   }
 }
 
@@ -110,19 +110,19 @@ module "honest_labs_connector_gcs_sink" {
   environment_id = module.honest_labs_environment.environment_id
   cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
 
+  connector_class          = "GcsSink"
+  connector_name           = "confluent-gcs-sink-test-labs"
+  input_data_format        = "AVRO"
+  topics                   = local.topics
+  kafka_auth_mode          = "SERVICE_ACCOUNT"
+  kafka_service_account_id = module.admin_privilege_service_account.admin_service_account_id
+  max_number_of_tasks      = "1"
+
   config_nonsensitive = {
-    "topics" = join(",", local.topics),
-    "input.data.format" : "AVRO",
-    "connector.class" = "GcsSink"
-    "name" : "confluent-gcs-sink-test-labs",
-    "kafka.auth.mode"          = "SERVICE_ACCOUNT"
-    "kafka.service.account.id" = module.admin_privilege_service_account.admin_service_account_id
-    "gcs.bucket.name"          = "bucket-test"
-    "output.data.format"       = "JSON"
-    "time.interval"            = "HOURLY"
-    "flush.size"               = "1000"
-    "tasks.max"                = "1"
-    "gcs.credentials.config"   = var.google_credentials
+    "gcs.bucket.name"    = "bucket-test"
+    "output.data.format" = "JSON"
+    "time.interval"      = "HOURLY"
+    "flush.size"         = "1000"
   }
 
   config_sensitive = {

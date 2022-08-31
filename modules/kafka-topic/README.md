@@ -42,5 +42,5 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_topic_name"></a> [topic\_name](#output\_topic\_name) | n/a |
+| <a name="output_topic_name"></a> [topic\_name](#output\_topic\_name) | Kafka topic |
 <!-- END_TF_DOCS -->

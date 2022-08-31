@@ -42,10 +42,10 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_admin_service_account_id"></a> [admin\_service\_account\_id](#output\_admin\_service\_account\_id) | n/a |
-| <a name="output_admin_service_account_name"></a> [admin\_service\_account\_name](#output\_admin\_service\_account\_name) | n/a |
-| <a name="output_cloud_api_key"></a> [cloud\_api\_key](#output\_cloud\_api\_key) | n/a |
-| <a name="output_cloud_api_secret"></a> [cloud\_api\_secret](#output\_cloud\_api\_secret) | n/a |
-| <a name="output_kafka_api_key"></a> [kafka\_api\_key](#output\_kafka\_api\_key) | n/a |
-| <a name="output_kafka_api_secret"></a> [kafka\_api\_secret](#output\_kafka\_api\_secret) | n/a |
+| <a name="output_admin_cloud_api_key"></a> [admin\_cloud\_api\_key](#output\_admin\_cloud\_api\_key) | Cloud API Key to managing environment resources: clusters, service accounts, and connectors |
+| <a name="output_admin_cloud_api_secret"></a> [admin\_cloud\_api\_secret](#output\_admin\_cloud\_api\_secret) | Cloud API Secret to managing environment resources: clusters, service accounts, and connectors |
+| <a name="output_admin_kafka_api_key"></a> [admin\_kafka\_api\_key](#output\_admin\_kafka\_api\_key) | Kafka API Key to manage kafka resources - topics, ACL on topics |
+| <a name="output_admin_kafka_api_secret"></a> [admin\_kafka\_api\_secret](#output\_admin\_kafka\_api\_secret) | Kafka API Secret to manage kafka resources - topics, ACL on topics |
+| <a name="output_admin_service_account_id"></a> [admin\_service\_account\_id](#output\_admin\_service\_account\_id) | Service Account ID to manage Kafka cluster |
+| <a name="output_admin_service_account_name"></a> [admin\_service\_account\_name](#output\_admin\_service\_account\_name) | Service Account name to manage Kafka cluster |
 <!-- END_TF_DOCS -->
