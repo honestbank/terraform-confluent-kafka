@@ -13,3 +13,8 @@ variable "environment" {
   type        = string
   description = "Environment/stage"
 }
+
+variable "google_sa_credentials" {
+  type = string
+  description = "google sa credentials json key file"
+}

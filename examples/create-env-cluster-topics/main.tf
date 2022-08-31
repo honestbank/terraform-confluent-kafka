@@ -51,3 +51,37 @@ module "honest_labs_kafka_topic" {
   topic_name         = "squad-raw.service-example.entity"
   depends_on         = [module.admin_privilege_service_account]
 }
+
+module "service_account_connector_gcs" {
+  source = "../../modules/service-account"
+  cluster_api_version = module.honest_labs_kafka_cluster_basic.cluster_api_version
+  cluster_id = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  cluster_kind = module.honest_labs_kafka_cluster_basic.cluster_kind
+  environment_id = module.honest_labs_environment.environment_id
+  service_account_name = "sa-connector-gcs"
+
+  depends_on = [module.admin_privilege_service_account]
+}
+
+
+module "freshwork_receiver_service_connector_gcs" {
+
+  source = "../../modules/kafka-connector-to-gcs"
+
+  providers = {
+    confluent = confluent.admin_sa
+  }
+
+  connector_sa_id        = module.service_account_connector_gcs.service_account_id
+  environment_id         = module.honest_labs_environment.environment_id
+  gcs_bucket_name        = "kafka-connector-test"
+  gcs_credentials_config = file(var.google_sa_credentials)
+  input_data_format      = "JSON"
+  kafka_cluster_id       = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  output_data_format     = "JSON"
+  rest_endpoint          = module.honest_labs_kafka_cluster_basic.rest_endpoint
+  topic_name             = module.honest_labs_kafka_topic.topic_name
+  connector_name         = "${module.honest_labs_kafka_topic.topic_name}-connector"
+
+  depends_on = [module.service_account_connector_gcs]
+}
