@@ -78,35 +78,35 @@ locals {
   ]
 }
 
-module "honest_labs_connector_bigquery_sink" {
-  source = "../../modules/connector"
-
-  environment_id = module.honest_labs_environment.environment_id
-  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-
-  connector_class     = "BigQuerySink"
-  connector_name      = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
-  input_data_format   = "JSON"
-  topics              = local.topics
-  kafka_auth_mode     = "KAFKA_API_KEY"
-  kafka_api_key       = module.kafka_topic_service_account.service_account_kafka_api_key
-  kafka_api_secret    = module.kafka_topic_service_account.service_account_kafka_api_key
-  max_number_of_tasks = "1"
-
-  config_nonsensitive = {
-    "project" : "storage-0994"
-    "datasets" : "terratest"
-    "auto.create.tables" : "false"
-    "sanitize.topics" : "false"
-    "auto.update.schemas" : "false"
-    "sanitize.field.names" : "false"
-    "partitioning.type" : "NONE"
-  }
-
-  config_sensitive = {
-    "keyfile" : var.google_credentials,
-  }
-}
+#module "honest_labs_connector_bigquery_sink" {
+#  source = "../../modules/connector"
+#
+#  environment_id = module.honest_labs_environment.environment_id
+#  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+#
+#  connector_class     = "BigQuerySink"
+#  connector_name      = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
+#  input_data_format   = "JSON"
+#  topics              = local.topics
+#  kafka_auth_mode     = "KAFKA_API_KEY"
+#  kafka_api_key       = module.kafka_topic_service_account.service_account_kafka_api_key
+#  kafka_api_secret    = module.kafka_topic_service_account.service_account_kafka_api_key
+#  max_number_of_tasks = "1"
+#
+#  config_nonsensitive = {
+#    "project" : "storage-0994"
+#    "datasets" : "terratest"
+#    "auto.create.tables" : "false"
+#    "sanitize.topics" : "false"
+#    "auto.update.schemas" : "false"
+#    "sanitize.field.names" : "false"
+#    "partitioning.type" : "NONE"
+#  }
+#
+#  config_sensitive = {
+#    "keyfile" : var.google_credentials,
+#  }
+#}
 
 #module "honest_labs_connector_gcs_sink" {
 #  source = "../../modules/connector"
