@@ -31,6 +31,10 @@ output "kafka_topic_name" {
   value = module.honest_labs_kafka_topic_example_1.topic_name
 }
 
-#output "bigquery_connector_id" {
-#  value = module.honest_labs_connector_bigquery_sink.connector_id
-#}
+output "bigquery_connector_id" {
+  value = module.honest_labs_connector_bigquery_sink.connector_id
+}
+
+output "connector_gcs_sink_connector_id" {
+  value = module.honest_labs_connector_gcs_sink.connector_id
+}

@@ -42,11 +42,11 @@ module "kafka_topic_service_account" {
 }
 
 module "honest_labs_connector_service_account" {
-  source = "../../modules/service-account"
-  cluster_api_version = module.honest_labs_kafka_cluster_basic.cluster_api_version
-  cluster_id = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-  cluster_kind = module.honest_labs_kafka_cluster_basic.cluster_kind
-  environment_id = module.honest_labs_environment.environment_id
+  source               = "../../modules/service-account"
+  cluster_api_version  = module.honest_labs_kafka_cluster_basic.cluster_api_version
+  cluster_id           = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  cluster_kind         = module.honest_labs_kafka_cluster_basic.cluster_kind
+  environment_id       = module.honest_labs_environment.environment_id
   service_account_name = "labs-cluster-connector-sa-${random_id.suffix.hex}"
 }
 
@@ -69,12 +69,12 @@ module "honest_labs_kafka_topic_example_1" {
     confluent = confluent.kafka_admin
   }
 
-  cluster_id         = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-  consumer_prefix    = "honest_consumer_"
-  service_account_id = module.kafka_topic_service_account.service_account_id
-  topic_name         = "squad_raw_service_example_1_entity"
+  cluster_id                   = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  consumer_prefix              = "honest_consumer_"
+  service_account_id           = module.kafka_topic_service_account.service_account_id
+  topic_name                   = "squad_raw_service_example_1_entity"
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
-  depends_on         = [module.cluster_admin_privilege_service_account]
+  depends_on                   = [module.cluster_admin_privilege_service_account]
 }
 
 module "honest_labs_kafka_topic_example_2" {
@@ -85,12 +85,12 @@ module "honest_labs_kafka_topic_example_2" {
     confluent = confluent.kafka_admin
   }
 
-  cluster_id         = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-  consumer_prefix    = "honest_consumer_"
-  service_account_id = module.kafka_topic_service_account.service_account_id
+  cluster_id                   = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  consumer_prefix              = "honest_consumer_"
+  service_account_id           = module.kafka_topic_service_account.service_account_id
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
-  topic_name         = "squad_raw_service_example_2_entity"
-  depends_on         = [module.cluster_admin_privilege_service_account]
+  topic_name                   = "squad_raw_service_example_2_entity"
+  depends_on                   = [module.cluster_admin_privilege_service_account]
 }
 
 locals {
@@ -100,58 +100,57 @@ locals {
   ]
 }
 
-#module "honest_labs_connector_bigquery_sink" {
-#  source = "../../modules/connector"
-#
-#  environment_id = module.honest_labs_environment.environment_id
-#  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-#
-#  connector_class     = "BigQuerySink"
-#  connector_name      = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
-#  input_data_format   = "JSON"
-#  topics              = local.topics
-#  kafka_auth_mode     = "KAFKA_API_KEY"
-#  kafka_api_key       = module.kafka_topic_service_account.service_account_kafka_api_key
-#  kafka_api_secret    = module.kafka_topic_service_account.service_account_kafka_api_key
-#  max_number_of_tasks = "1"
-#
-#  config_nonsensitive = {
-#    "project" : "storage-0994"
-#    "datasets" : "terratest"
-#    "auto.create.tables" : "false"
-#    "sanitize.topics" : "false"
-#    "auto.update.schemas" : "false"
-#    "sanitize.field.names" : "false"
-#    "partitioning.type" : "NONE"
-#  }
-#
-#  config_sensitive = {
-#    "keyfile" : var.google_credentials,
-#  }
-#}
+module "honest_labs_connector_bigquery_sink" {
+  source = "../../modules/connector"
 
-#module "honest_labs_connector_gcs_sink" {
-#  source = "../../modules/connector"
-#
-#  environment_id = module.honest_labs_environment.environment_id
-#  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-#
-#  connector_class          = "GcsSink"
-#  connector_name           = "labs-confluent-gcs-sink-${random_id.suffix.hex}"
-#  input_data_format        = "AVRO"
-#  topics                   = local.topics
-#  kafka_auth_mode          = "SERVICE_ACCOUNT"
-#  kafka_service_account_id = module.admin_privilege_service_account.admin_service_account_id
-#  max_number_of_tasks      = "1"
-#
-#  config_nonsensitive = {
-#    "gcs.bucket.name"    = "bucket-test"
-#    "output.data.format" = "JSON"
-#    "time.interval"      = "HOURLY"
-#    "flush.size"         = "1000"
-#  }
-#
-#  config_sensitive = {
-#    "gcs.credentials.config" = var.google_credentials
-#  }
-#}
+  environment_id = module.honest_labs_environment.environment_id
+  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+
+  connector_class          = "BigQuerySink"
+  connector_name           = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
+  input_data_format        = "JSON"
+  topics                   = local.topics
+  kafka_auth_mode          = "SERVICE_ACCOUNT"
+  kafka_service_account_id = module.honest_labs_connector_service_account.service_account_id
+  max_number_of_tasks      = "1"
+
+  config_nonsensitive = {
+    "project" : "storage-0994"
+    "datasets" : "terratest"
+    "auto.create.tables" : "false"
+    "sanitize.topics" : "false"
+    "auto.update.schemas" : "false"
+    "sanitize.field.names" : "false"
+    "partitioning.type" : "NONE"
+  }
+
+  config_sensitive = {
+    "keyfile" : var.google_credentials,
+  }
+}
+
+module "honest_labs_connector_gcs_sink" {
+  source = "../../modules/connector"
+
+  environment_id = module.honest_labs_environment.environment_id
+  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+
+  connector_class          = "GcsSink"
+  connector_name           = "labs-confluent-gcs-sink-${random_id.suffix.hex}"
+  input_data_format        = "JSON"
+  topics                   = local.topics
+  kafka_auth_mode          = "SERVICE_ACCOUNT"
+  kafka_service_account_id = module.honest_labs_connector_service_account.service_account_id
+  max_number_of_tasks      = "1"
+
+  config_nonsensitive = {
+    "gcs.bucket.name"    = "manual-test-confluent-connector"
+    "output.data.format" = "JSON"
+    "time.interval"      = "HOURLY"
+    "flush.size"         = "1000"
+  }
+
+  config_sensitive = {
+    "gcs.credentials.config" = var.google_credentials
+  }
+}

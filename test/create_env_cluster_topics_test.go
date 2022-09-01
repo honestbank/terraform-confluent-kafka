@@ -82,5 +82,14 @@ func TestEnvClusterTopic(t *testing.T) {
 		output = terraform.Output(t, runOptions, "kafka_topic_name")
 		a.Equal(output, "squad_raw_service_example_1_entity")
 
+		output = terraform.Output(t, runOptions, "kafka_topic_name")
+		a.Equal(output, "squad_raw_service_example_1_entity")
+
+		output = terraform.Output(t, runOptions, "bigquery_connector_id")
+		a.NotEmpty(output)
+
+		output = terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
+		a.NotEmpty(output)
+
 	})
 }

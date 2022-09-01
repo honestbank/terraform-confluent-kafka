@@ -20,6 +20,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [confluent_kafka_acl.connector_read_target_topic](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
 | [confluent_kafka_acl.kafka_acl_consumer](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
 | [confluent_kafka_acl.kafka_acl_read](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
 | [confluent_kafka_acl.kafka_acl_write](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
@@ -30,6 +31,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | The ID of the cluster | `string` | n/a | yes |
+| <a name="input_connector_service_account_id"></a> [connector\_service\_account\_id](#input\_connector\_service\_account\_id) | The ID of the service account managing kafka connector | `string` | n/a | yes |
 | <a name="input_consumer_prefix"></a> [consumer\_prefix](#input\_consumer\_prefix) | The prefix of the consumer group, by default | `string` | n/a | yes |
 | <a name="input_delete_policy"></a> [delete\_policy](#input\_delete\_policy) | Delete policy, available values: delete or compact | `string` | `"delete"` | no |
 | <a name="input_max_message_bytes"></a> [max\_message\_bytes](#input\_max\_message\_bytes) | Maximum size of a message in bytes | `string` | `"2097164"` | no |

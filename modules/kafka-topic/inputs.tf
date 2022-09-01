@@ -43,6 +43,6 @@ variable "consumer_prefix" {
 }
 
 variable "connector_service_account_id" {
-  type = string
+  type        = string
   description = "The ID of the service account managing kafka connector"
 }
