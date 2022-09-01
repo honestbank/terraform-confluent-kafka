@@ -41,6 +41,26 @@ module "kafka_topic_service_account" {
   depends_on = [module.cluster_admin_privilege_service_account]
 }
 
+module "honest_labs_connector_service_account" {
+  source = "../../modules/service-account"
+  cluster_api_version = module.honest_labs_kafka_cluster_basic.cluster_api_version
+  cluster_id = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  cluster_kind = module.honest_labs_kafka_cluster_basic.cluster_kind
+  environment_id = module.honest_labs_environment.environment_id
+  service_account_name = "labs-cluster-connector-sa-${random_id.suffix.hex}"
+}
+
+module "honest_labs_connector_service_account_grant_permission" {
+  source = "../../modules/connector-service-account"
+
+  providers = {
+    confluent = confluent.kafka_admin
+  }
+
+  kafka_cluster_id   = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  service_account_id = module.honest_labs_connector_service_account.service_account_id
+}
+
 module "honest_labs_kafka_topic_example_1" {
   source = "../../modules/kafka-topic"
 
@@ -53,7 +73,7 @@ module "honest_labs_kafka_topic_example_1" {
   consumer_prefix    = "honest_consumer_"
   service_account_id = module.kafka_topic_service_account.service_account_id
   topic_name         = "squad_raw_service_example_1_entity"
-  connector_service_account_id = module.honest_labs_connector_service_account.connector_service_account_id
+  connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
   depends_on         = [module.cluster_admin_privilege_service_account]
 }
 
@@ -68,22 +88,9 @@ module "honest_labs_kafka_topic_example_2" {
   cluster_id         = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   consumer_prefix    = "honest_consumer_"
   service_account_id = module.kafka_topic_service_account.service_account_id
-  connector_service_account_id = module.honest_labs_connector_service_account.connector_service_account_id
+  connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
   topic_name         = "squad_raw_service_example_2_entity"
   depends_on         = [module.cluster_admin_privilege_service_account]
-}
-
-module "honest_labs_connector_service_account" {
-  source = "../../modules/connector-service-account"
-
-  providers = {
-    confluent = confluent.kafka_admin
-  }
-
-  kafka_cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-  service_account_name = "labs-cluster-connector-sa-${random_id.suffix.hex}"
-
-  depends_on = [module.cluster_admin_privilege_service_account]
 }
 
 locals {
