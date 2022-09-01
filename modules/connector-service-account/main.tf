@@ -16,7 +16,7 @@ resource "confluent_kafka_acl" "connector_describe_on_cluster" {
   permission    = "ALLOW"
 }
 
-resource "confluent_kafka_acl" "app-connector-create-on-dlq-lcc-topics" {
+resource "confluent_kafka_acl" "connector_create_on_dlq_lcc_topics" {
   kafka_cluster {
     id = var.kafka_cluster_id
   }
@@ -29,7 +29,7 @@ resource "confluent_kafka_acl" "app-connector-create-on-dlq-lcc-topics" {
   permission    = "ALLOW"
 }
 
-resource "confluent_kafka_acl" "app-connector-write-on-dlq-lcc-topics" {
+resource "confluent_kafka_acl" "connector_write_on_dlq_lcc_topics" {
   kafka_cluster {
     id = var.kafka_cluster_id
   }
@@ -42,7 +42,7 @@ resource "confluent_kafka_acl" "app-connector-write-on-dlq-lcc-topics" {
   permission    = "ALLOW"
 }
 
-resource "confluent_kafka_acl" "app-connector-read-on-connect-lcc-group" {
+resource "confluent_kafka_acl" "app_connector_read_on_connect_lcc_group" {
   kafka_cluster {
     id = var.kafka_cluster_id
   }
