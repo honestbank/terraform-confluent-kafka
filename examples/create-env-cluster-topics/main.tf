@@ -108,7 +108,7 @@ module "honest_labs_connector_bigquery_sink" {
 
   connector_class          = "BigQuerySink"
   connector_name           = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
-  input_data_format        = "JSON"
+  input_data_format        = "AVRO"
   topics                   = local.topics
   kafka_auth_mode          = "SERVICE_ACCOUNT"
   kafka_service_account_id = module.honest_labs_connector_service_account.service_account_id
@@ -137,7 +137,7 @@ module "honest_labs_connector_gcs_sink" {
 
   connector_class          = "GcsSink"
   connector_name           = "labs-confluent-gcs-sink-${random_id.suffix.hex}"
-  input_data_format        = "JSON"
+  input_data_format        = "AVRO"
   topics                   = local.topics
   kafka_auth_mode          = "SERVICE_ACCOUNT"
   kafka_service_account_id = module.honest_labs_connector_service_account.service_account_id

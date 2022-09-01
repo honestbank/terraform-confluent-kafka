@@ -19,7 +19,7 @@ func TestEnvClusterTopic(t *testing.T) {
 
 	clusterName := "test-cluster-" + runID
 
-	applyDestroyTestCaseName := "apply_destroy_" + clusterName
+	applyDestroyTestCaseName := "ApplyAndDestroy-" + clusterName
 
 	workingDir := ""
 
@@ -34,15 +34,27 @@ func TestEnvClusterTopic(t *testing.T) {
 		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET not set")
 		os.Exit(1)
 	}
+	fmt.Printf("Got confluent credentials. Key/secret lengths %d/%d\n", len(cloudAPIKey), len(cloudAPISecret))
 
-	fmt.Printf("Got confluent credentials. Key/secret lengths %d/%d", len(cloudAPIKey), len(cloudAPISecret))
-
-	GoogleCredentialsJSON, exist := os.LookupEnv("TERRATEST_GOOGLE_CREDENTIALS")
+	confluentCloudEmail, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_EMAIL")
 	if !exist {
-		fmt.Println("TERRATEST_GOOGLE_CREDENTIALS not set")
+		fmt.Println("TERRATEST_CONFLUENT_CLOUD_EMAIL not set")
 		os.Exit(1)
 	}
-	fmt.Printf("Got Google Credentials. lengths %d", len(GoogleCredentialsJSON))
+
+	confluentCloudPassword, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_PASSWORD")
+	if !exist {
+		fmt.Println("TERRATEST_CONFLUENT_CLOUD_PASSWORD not set")
+		os.Exit(1)
+	}
+	fmt.Printf("Got confluent cloud credential. Email/Password lengths %d/%d\n", len(confluentCloudEmail), len(confluentCloudPassword))
+
+	GoogleCredentialsJSON, exist := os.LookupEnv("TERRATEST_GOOGLE_CREDENTIALS_STORAGE")
+	if !exist {
+		fmt.Println("TERRATEST_GOOGLE_CREDENTIALS_STORAGE not set")
+		os.Exit(1)
+	}
+	fmt.Printf("Got Google Credentials. lengths %d\n", len(GoogleCredentialsJSON))
 
 	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
 		a := assert.New(t)
@@ -58,6 +70,8 @@ func TestEnvClusterTopic(t *testing.T) {
 					"confluent_cloud_api_key":    cloudAPIKey,
 					"confluent_cloud_api_secret": cloudAPISecret,
 					"google_credentials":         GoogleCredentialsJSON,
+					"confluent_cloud_email":      confluentCloudEmail,
+					"confluent_cloud_password":   confluentCloudPassword,
 				},
 			})
 		})
@@ -90,6 +104,5 @@ func TestEnvClusterTopic(t *testing.T) {
 
 		output = terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
 		a.NotEmpty(output)
-
 	})
 }
