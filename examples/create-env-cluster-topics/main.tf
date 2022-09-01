@@ -82,6 +82,8 @@ module "honest_labs_connector_service_account" {
 
   kafka_cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   service_account_name = "labs-cluster-connector-sa-${random_id.suffix.hex}"
+
+  depends_on = [module.cluster_admin_privilege_service_account]
 }
 
 locals {
