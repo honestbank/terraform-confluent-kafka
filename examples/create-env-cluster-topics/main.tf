@@ -80,7 +80,7 @@ module "honest_labs_connector_service_account" {
     confluent = confluent.kafka_admin
   }
 
-  kafka_cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_name
+  kafka_cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   service_account_name = "labs-cluster-connector-sa-${random_id.suffix.hex}"
 }
 
