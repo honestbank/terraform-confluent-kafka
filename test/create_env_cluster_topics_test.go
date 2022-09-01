@@ -1,18 +1,15 @@
 package test
 
 import (
+	"encoding/base64"
 	"fmt"
-	"log"
-	"os"
-	"strings"
-	"testing"
-	"time"
-
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
+	"os"
+	"strings"
+	"testing"
 )
 
 func TestEnvClusterTopic(t *testing.T) {
@@ -74,6 +71,7 @@ func TestEnvClusterTopic(t *testing.T) {
 		output = terraform.Output(t, runOptions, "kafka_topic_name")
 		a.Equal(output, "squad-raw.service-example.entity")
 
+		// Check consumer and producer
 		topicSAKey := terraform.Output(t, runOptions, "topic_service_account_key")
 		topicSASecret := terraform.Output(t, runOptions, "topic_service_account_secret")
 		bootstrap := terraform.Output(t, runOptions, "kafka_cluster_basic_bootstrap_endpoint")
@@ -81,81 +79,29 @@ func TestEnvClusterTopic(t *testing.T) {
 
 		producer := newKafkaProducer(topicSAKey, topicSASecret, bootstrap)
 		produceKafkaMessage(producer, topicName, []byte("hello world"))
-		producer.Close()
 
 		consumer := newKafkaConsumer(topicSAKey, topicSASecret, bootstrap, "honest_consumer_terratest")
 		a.True(consumeKafkaMessage(consumer, topicName))
-		err := consumer.Close()
-		if err != nil {
-			fmt.Printf(err.Error())
-			return
-		}
+
+		// check resource state
+		adminApiKey := terraform.Output(t, runOptions, "admin_cloud_api_key")
+		adminApiSecret := terraform.Output(t, runOptions, "admin_cloud_api_secret")
+		clusterId := terraform.Output(t, runOptions, "kafka_cluster_basic_id")
+		envId := terraform.Output(t, runOptions, "environment_id")
+		topicSAID := terraform.Output(t, runOptions, "topic_service_account_id")
+		topicSAApiVersion := terraform.Output(t, runOptions, "topic_service_account_api_version")
+		topicSAKind := terraform.Output(t, runOptions, "topic_service_account_kind")
+
+		authKey := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", adminApiKey, adminApiSecret)))
+
+		clusterCfg := getClusterState(clusterId, envId, authKey)
+		a.Equal(clusterCfg.Status.Phase, "PROVISIONED")
+		a.Equal(clusterCfg.Spec.Availability, "SINGLE_ZONE")
+		a.Equal(clusterCfg.Spec.Cloud, "GCP")
+		a.Equal(clusterCfg.Spec.Region, "asia-southeast2")
+
+		sa := getServiceAccountState(topicSAID, authKey)
+		a.Equal(sa.ApiVersion, topicSAApiVersion)
+		a.Equal(sa.Kind, topicSAKind)
 	})
-}
-
-func newKafkaProducer(username string, password string, bootstrap string) *kafka.Producer {
-	producer, err := kafka.NewProducer(&kafka.ConfigMap{
-		"sasl.username":     username,
-		"sasl.password":     password,
-		"bootstrap.servers": bootstrap,
-		"sasl.mechanisms":   "PLAIN",
-		"security.protocol": "SASL_SSL",
-	})
-	if err != nil {
-		fmt.Printf("Failed to create producer: %s", err)
-		os.Exit(1)
-	}
-	return producer
-}
-
-func produceKafkaMessage(producer *kafka.Producer, topic string, message []byte) {
-	msg := &kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-		Value:          message,
-	}
-	err := producer.Produce(msg, nil)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	fmt.Println(producer.Flush(3000))
-}
-
-func newKafkaConsumer(username string, password string, bootstrap string, consumerGroup string) *kafka.Consumer {
-	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"sasl.username":            username,
-		"sasl.password":            password,
-		"bootstrap.servers":        bootstrap,
-		"sasl.mechanisms":          "PLAIN",
-		"security.protocol":        "SASL_SSL",
-		"session.timeout.ms":       6000,
-		"group.id":                 consumerGroup,
-		"auto.offset.reset":        "earliest",
-		"enable.auto.offset.store": false,
-		"broker.address.family":    "v4",
-	})
-	if err != nil {
-		fmt.Printf("Failed to create producer: %s", err)
-		os.Exit(1)
-	}
-	return consumer
-}
-
-func consumeKafkaMessage(consumer *kafka.Consumer, topic string) bool {
-	topics := []string{topic}
-	err := consumer.SubscribeTopics(topics, nil)
-	if err != nil {
-		log.Fatalln(err)
-		return false
-	}
-	for {
-		_, err := consumer.ReadMessage(100 * time.Millisecond)
-		if err == nil {
-			if err != nil {
-				fmt.Printf("Failed to deserialize payload: %s\n", err)
-			} else {
-				return true
-			}
-		}
-	}
 }

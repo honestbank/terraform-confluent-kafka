@@ -1,6 +1,6 @@
 resource "confluent_service_account" "admin" {
   display_name = var.admin_service_account_name
-  description  = "Admin service account of cluster ${var.cluster_id} in environment ${var.environment_id}"
+  description  = "Admin service account"
 }
 
 resource "confluent_role_binding" "admin_environment" {
