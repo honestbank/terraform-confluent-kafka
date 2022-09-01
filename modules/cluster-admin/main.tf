@@ -51,4 +51,3 @@ resource "confluent_api_key" "admin_cloud_api_key" {
     confluent_role_binding.admin_environment
   ]
 }
-

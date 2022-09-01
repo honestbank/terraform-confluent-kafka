@@ -41,3 +41,8 @@ variable "consumer_prefix" {
   type        = string
   description = "The prefix of the consumer group, by default"
 }
+
+variable "connector_service_account_id" {
+  type = string
+  description = "The ID of the service account managing kafka connector"
+}

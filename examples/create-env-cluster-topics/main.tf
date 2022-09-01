@@ -53,6 +53,7 @@ module "honest_labs_kafka_topic_example_1" {
   consumer_prefix    = "honest_consumer_"
   service_account_id = module.kafka_topic_service_account.service_account_id
   topic_name         = "squad_raw_service_example_1_entity"
+  connector_service_account_id = module.honest_labs_connector_service_account.connector_service_account_id
   depends_on         = [module.cluster_admin_privilege_service_account]
 }
 
@@ -67,8 +68,20 @@ module "honest_labs_kafka_topic_example_2" {
   cluster_id         = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   consumer_prefix    = "honest_consumer_"
   service_account_id = module.kafka_topic_service_account.service_account_id
+  connector_service_account_id = module.honest_labs_connector_service_account.connector_service_account_id
   topic_name         = "squad_raw_service_example_2_entity"
   depends_on         = [module.cluster_admin_privilege_service_account]
+}
+
+module "honest_labs_connector_service_account" {
+  source = "../../modules/connector-service-account"
+
+  providers = {
+    confluent = confluent.kafka_admin
+  }
+
+  kafka_cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_name
+  service_account_name = "labs-cluster-connector-sa-${random_id.suffix.hex}"
 }
 
 locals {
