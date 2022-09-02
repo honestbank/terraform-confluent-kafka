@@ -22,15 +22,6 @@ resource "null_resource" "enable_schema_registry" {
     command = "./bin/confluent version"
   }
 
-  #  provisioner "local-exec" {
-  #    command = "./bin/confluent schema-registry cluster enable --environment=${module.honest_labs_environment.environment_id} --cloud=${local.schema_registry_cloud} --geo=${local.schema_registry_geo} 1> schema-registry-result.txt 2> schema-registry-error.txt"
-  #
-  #    environment = {
-  #      CONFLUENT_CLOUD_EMAIL    = var.confluent_cloud_email
-  #      CONFLUENT_CLOUD_PASSWORD = var.confluent_cloud_password
-  #    }
-  #  }
-
   provisioner "local-exec" {
     command = "./bin/confluent login --organization-id ${local.confluent_cloud_org_id} --save"
 
