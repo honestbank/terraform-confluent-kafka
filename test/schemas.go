@@ -16,10 +16,6 @@ type clusterSpec struct {
 	Region       string `json:"region"`
 }
 
-type topic struct {
-	PartitionsCount int `json:"partitions_count"`
-}
-
 type serviceAccount struct {
 	Kind       string `json:"kind"`
 	ApiVersion string `json:"api_version"`

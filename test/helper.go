@@ -126,22 +126,3 @@ func getServiceAccountState(serviceAccountId string, authKey string) serviceAcco
 	}
 	return sa
 }
-
-func GetTopicState(restEndpoint string, clusterId string, topicName string, authKey string) topic {
-	url := fmt.Sprintf("%s/kafka/v3/clusters/%s/topics/%s", restEndpoint, clusterId, topicName)
-
-	req, _ := http.NewRequest("GET", url, nil)
-
-	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", authKey))
-
-	res, _ := http.DefaultClient.Do(req)
-
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-	var topicObj topic
-	err := json.Unmarshal(body, &topicObj)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return topicObj
-}
