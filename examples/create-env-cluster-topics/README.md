@@ -7,7 +7,6 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
@@ -15,6 +14,7 @@ No requirements.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_cluster_admin_privilege_service_account"></a> [cluster\_admin\_privilege\_service\_account](#module\_cluster\_admin\_privilege\_service\_account) | ../../modules/cluster-admin | n/a |
+| <a name="module_enable_schema_registry"></a> [enable\_schema\_registry](#module\_enable\_schema\_registry) | ../../modules/enable-schema-registry | n/a |
 | <a name="module_honest_labs_connector_bigquery_sink"></a> [honest\_labs\_connector\_bigquery\_sink](#module\_honest\_labs\_connector\_bigquery\_sink) | ../../modules/connector | n/a |
 | <a name="module_honest_labs_connector_gcs_sink"></a> [honest\_labs\_connector\_gcs\_sink](#module\_honest\_labs\_connector\_gcs\_sink) | ../../modules/connector | n/a |
 | <a name="module_honest_labs_connector_service_account"></a> [honest\_labs\_connector\_service\_account](#module\_honest\_labs\_connector\_service\_account) | ../../modules/service-account | n/a |
@@ -29,7 +29,6 @@ No requirements.
 
 | Name | Type |
 |------|------|
-| [null_resource.enable_schema_registry](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_id.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
 ## Inputs

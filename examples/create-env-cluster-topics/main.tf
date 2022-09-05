@@ -1,3 +1,9 @@
+locals {
+  schema_registry_cloud  = "gcp"
+  schema_registry_geo    = "apac"
+  confluent_cloud_org_id = "137f6bf3-7005-4122-94d2-faf0d17f584c"
+}
+
 resource "random_id" "suffix" {
   byte_length = 4
 }
@@ -6,6 +12,17 @@ module "honest_labs_environment" {
   source = "../../modules/environment"
 
   environment_name = "labs-environment-${var.environment}-${random_id.suffix.hex}"
+}
+
+module "enable_schema_registry" {
+  source = "../../modules/enable-schema-registry"
+
+  confluent_cloud_email     = var.confluent_cloud_email
+  confluent_cloud_password  = var.confluent_cloud_password
+  confluent_organization_id = local.confluent_cloud_org_id
+  environment_id            = module.honest_labs_environment.environment_id
+  schema_registry_cloud     = local.schema_registry_cloud
+  schema_registry_geo       = local.schema_registry_geo
 }
 
 module "honest_labs_kafka_cluster_basic" {
