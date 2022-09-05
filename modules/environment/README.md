@@ -26,7 +26,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Confluent Environment name. The name should be start and end the name with alphanumeric characters and can contain hyphens and underscores. | `string` | n/a | yes |
+| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | (Required) Confluent Environment name. The name should be start and end the name with alphanumeric characters and can contain hyphens and underscores. | `string` | n/a | yes |
 
 ## Outputs
 

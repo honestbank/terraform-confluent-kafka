@@ -38,9 +38,9 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_service_account_api_version"></a> [service\_account\_api\_version](#output\_service\_account\_api\_version) | n/a |
-| <a name="output_service_account_id"></a> [service\_account\_id](#output\_service\_account\_id) | n/a |
-| <a name="output_service_account_kafka_api_key"></a> [service\_account\_kafka\_api\_key](#output\_service\_account\_kafka\_api\_key) | n/a |
-| <a name="output_service_account_kafka_api_secret"></a> [service\_account\_kafka\_api\_secret](#output\_service\_account\_kafka\_api\_secret) | n/a |
-| <a name="output_service_account_kind"></a> [service\_account\_kind](#output\_service\_account\_kind) | n/a |
+| <a name="output_service_account_api_version"></a> [service\_account\_api\_version](#output\_service\_account\_api\_version) | An API Version of the schema version of the Service Account, for example, `iam/v2` |
+| <a name="output_service_account_id"></a> [service\_account\_id](#output\_service\_account\_id) | The ID of the Service Account |
+| <a name="output_service_account_kafka_api_key"></a> [service\_account\_kafka\_api\_key](#output\_service\_account\_kafka\_api\_key) | The ID of the API Key |
+| <a name="output_service_account_kafka_api_secret"></a> [service\_account\_kafka\_api\_secret](#output\_service\_account\_kafka\_api\_secret) | The secret of the API Key |
+| <a name="output_service_account_kind"></a> [service\_account\_kind](#output\_service\_account\_kind) | A kind of the Service Account, for example, `ServiceAccount`. |
 <!-- END_TF_DOCS -->

@@ -27,4 +27,5 @@ output "admin_cloud_api_key" {
 output "admin_cloud_api_secret" {
   description = "Cloud API Secret to managing environment resources: clusters, service accounts, and connectors"
   value       = confluent_api_key.admin_cloud_api_key.secret
+  sensitive   = true
 }

@@ -29,8 +29,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_kafka_cluster_id"></a> [kafka\_cluster\_id](#input\_kafka\_cluster\_id) | The id of the kafka cluster | `string` | n/a | yes |
-| <a name="input_service_account_id"></a> [service\_account\_id](#input\_service\_account\_id) | The ID of the service account responsible for managing kafka connector | `string` | n/a | yes |
+| <a name="input_kafka_cluster_id"></a> [kafka\_cluster\_id](#input\_kafka\_cluster\_id) | (Required) The id of the kafka cluster | `string` | n/a | yes |
+| <a name="input_service_account_id"></a> [service\_account\_id](#input\_service\_account\_id) | (Required) The ID of the service account responsible for managing kafka connector | `string` | n/a | yes |
 
 ## Outputs
 
