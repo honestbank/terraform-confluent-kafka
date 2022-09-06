@@ -1,3 +1,18 @@
+locals {
+  RESOURCE_TYPE_TOPIC = "TOPIC"
+  RESOURCE_TYPE_GROUP = "GROUP"
+
+  PATTERN_TYPE_LITERAL  = "LITERAL"
+  PATTERN_TYPE_PREFIXED = "PREFIXED"
+
+  OPERATION_WRITE = "WRITE"
+  OPERATION_READ  = "READ"
+
+  PERMISSION_ALLOW = "ALLOW"
+
+  HOST_WILDCARD = "*"
+}
+
 resource "confluent_kafka_topic" "topic" {
   kafka_cluster {
     id = var.cluster_id
@@ -15,51 +30,51 @@ resource "confluent_kafka_acl" "kafka_acl_write" {
   kafka_cluster {
     id = var.cluster_id
   }
-  resource_type = "TOPIC"
+  resource_type = local.RESOURCE_TYPE_TOPIC
   resource_name = confluent_kafka_topic.topic.topic_name
-  pattern_type  = "LITERAL"
+  pattern_type  = local.PATTERN_TYPE_LITERAL
   principal     = "User:${var.service_account_id}"
-  host          = "*"
-  operation     = "WRITE"
-  permission    = "ALLOW"
+  host          = local.HOST_WILDCARD
+  operation     = local.OPERATION_WRITE
+  permission    = local.PERMISSION_ALLOW
 }
 
 resource "confluent_kafka_acl" "kafka_acl_read" {
   kafka_cluster {
     id = var.cluster_id
   }
-  resource_type = "TOPIC"
+  resource_type = local.RESOURCE_TYPE_TOPIC
   resource_name = confluent_kafka_topic.topic.topic_name
-  pattern_type  = "LITERAL"
+  pattern_type  = local.PATTERN_TYPE_LITERAL
   principal     = "User:${var.service_account_id}"
-  host          = "*"
-  operation     = "READ"
-  permission    = "ALLOW"
+  host          = local.HOST_WILDCARD
+  operation     = local.OPERATION_READ
+  permission    = local.PERMISSION_ALLOW
 }
 
 resource "confluent_kafka_acl" "kafka_acl_consumer" {
   kafka_cluster {
     id = var.cluster_id
   }
-  resource_type = "GROUP"
+  resource_type = local.RESOURCE_TYPE_GROUP
 
   resource_name = var.consumer_prefix
-  pattern_type  = "PREFIXED"
+  pattern_type  = local.PATTERN_TYPE_PREFIXED
   principal     = "User:${var.service_account_id}"
-  host          = "*"
-  operation     = "READ"
-  permission    = "ALLOW"
+  host          = local.HOST_WILDCARD
+  operation     = local.OPERATION_READ
+  permission    = local.PERMISSION_ALLOW
 }
 
 resource "confluent_kafka_acl" "connector_read_target_topic" {
   kafka_cluster {
     id = var.cluster_id
   }
-  resource_type = "TOPIC"
+  resource_type = local.RESOURCE_TYPE_TOPIC
   resource_name = var.topic_name
-  pattern_type  = "LITERAL"
+  pattern_type  = local.PATTERN_TYPE_LITERAL
   principal     = "User:${var.connector_service_account_id}"
-  host          = "*"
-  operation     = "READ"
-  permission    = "ALLOW"
+  host          = local.HOST_WILDCARD
+  operation     = local.OPERATION_READ
+  permission    = local.PERMISSION_ALLOW
 }
