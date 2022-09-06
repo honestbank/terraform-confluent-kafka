@@ -1,16 +1,16 @@
 variable "service_account_id" {
   type        = string
-  description = "service account id to grant permission to read/write to topic"
+  description = "(Required) service account id to grant permission to read/write to topic"
 }
 
 variable "cluster_id" {
   type        = string
-  description = "The ID of the cluster"
+  description = "(Required) The ID of the cluster"
 }
 
 variable "topic_name" {
   type        = string
-  description = "The name of the topic"
+  description = "(Required) The name of the topic"
 }
 
 variable "partition_count" {
@@ -39,5 +39,10 @@ variable "max_message_bytes" {
 
 variable "consumer_prefix" {
   type        = string
-  description = "The prefix of the consumer group, by default"
+  description = "(Required) The prefix of the consumer group, by default"
+}
+
+variable "connector_service_account_id" {
+  type        = string
+  description = "(Required) The ID of the service account managing kafka connector"
 }

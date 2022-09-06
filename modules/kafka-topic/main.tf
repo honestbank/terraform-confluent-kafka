@@ -50,3 +50,16 @@ resource "confluent_kafka_acl" "kafka_acl_consumer" {
   operation     = "READ"
   permission    = "ALLOW"
 }
+
+resource "confluent_kafka_acl" "connector_read_target_topic" {
+  kafka_cluster {
+    id = var.cluster_id
+  }
+  resource_type = "TOPIC"
+  resource_name = var.topic_name
+  pattern_type  = "LITERAL"
+  principal     = "User:${var.connector_service_account_id}"
+  host          = "*"
+  operation     = "READ"
+  permission    = "ALLOW"
+}

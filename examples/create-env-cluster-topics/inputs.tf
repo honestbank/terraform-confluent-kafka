@@ -9,7 +9,25 @@ variable "confluent_cloud_api_secret" {
   sensitive   = true
 }
 
+variable "confluent_cloud_email" {
+  type        = string
+  description = "Confluent Cloud Email"
+}
+
+variable "confluent_cloud_password" {
+  type        = string
+  description = "Confluent Cloud Password"
+  sensitive   = true
+}
+
 variable "environment" {
   type        = string
   description = "Environment/stage"
+  default     = "local"
+}
+
+variable "google_credentials" {
+  type        = string
+  sensitive   = true
+  description = "Google Credentials JSON"
 }

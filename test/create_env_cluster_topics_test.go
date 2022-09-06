@@ -19,20 +19,42 @@ func TestEnvClusterTopic(t *testing.T) {
 
 	clusterName := "test-cluster-" + runID
 
-	applyDestroyTestCaseName := "apply_destroy_" + clusterName
+	applyDestroyTestCaseName := "ApplyAndDestroy-" + clusterName
+
 	workingDir := ""
+
 	cloudAPIKey, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_SEED_KEY")
 	if !exist {
 		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_KEY not set")
 		os.Exit(1)
 	}
+
 	cloudAPISecret, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET")
 	if !exist {
 		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET not set")
 		os.Exit(1)
 	}
+	fmt.Printf("Got confluent credentials. Key/secret lengths %d/%d\n", len(cloudAPIKey), len(cloudAPISecret))
 
-	fmt.Printf("Got confluent credentials. Key/secret lengths %d/%d", len(cloudAPIKey), len(cloudAPISecret))
+	confluentCloudEmail, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_EMAIL")
+	if !exist {
+		fmt.Println("TERRATEST_CONFLUENT_CLOUD_EMAIL not set")
+		os.Exit(1)
+	}
+
+	confluentCloudPassword, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_PASSWORD")
+	if !exist {
+		fmt.Println("TERRATEST_CONFLUENT_CLOUD_PASSWORD not set")
+		os.Exit(1)
+	}
+	fmt.Printf("Got confluent cloud credential. Email/Password lengths %d/%d\n", len(confluentCloudEmail), len(confluentCloudPassword))
+
+	GoogleCredentialsJSON, exist := os.LookupEnv("TERRATEST_GOOGLE_CREDENTIALS_STORAGE")
+	if !exist {
+		fmt.Println("TERRATEST_GOOGLE_CREDENTIALS_STORAGE not set")
+		os.Exit(1)
+	}
+	fmt.Printf("Got Google Credentials. lengths %d\n", len(GoogleCredentialsJSON))
 
 	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
 		a := assert.New(t)
@@ -44,9 +66,12 @@ func TestEnvClusterTopic(t *testing.T) {
 				TerraformDir: workingDir,
 				EnvVars:      map[string]string{},
 				Vars: map[string]interface{}{
-					"environment":                "test",
+					"environment":                runID,
 					"confluent_cloud_api_key":    cloudAPIKey,
 					"confluent_cloud_api_secret": cloudAPISecret,
+					"google_credentials":         GoogleCredentialsJSON,
+					"confluent_cloud_email":      confluentCloudEmail,
+					"confluent_cloud_password":   confluentCloudPassword,
 				},
 			})
 		})
@@ -57,18 +82,27 @@ func TestEnvClusterTopic(t *testing.T) {
 		var output string
 
 		output = terraform.Output(t, runOptions, "environment_name")
-		a.True(strings.Contains(output, "honest-labs-test"))
+		a.True(strings.Contains(output, "labs-environment-"+runID))
 
 		output = terraform.Output(t, runOptions, "environment_id")
 		a.NotEmpty(output)
 
 		output = terraform.Output(t, runOptions, "kafka_cluster_basic_name")
-		a.True(strings.Contains(output, "kafka-labs-1-basic"))
+		a.True(strings.Contains(output, "labs-kafka-cluster-"))
 
 		output = terraform.Output(t, runOptions, "topic_service_account_key")
 		a.NotEmpty(output)
 
 		output = terraform.Output(t, runOptions, "kafka_topic_name")
-		a.Equal(output, "squad-raw.service-example.entity")
+		a.Equal(output, "squad_raw_service_example_1_entity")
+
+		output = terraform.Output(t, runOptions, "kafka_topic_name")
+		a.Equal(output, "squad_raw_service_example_1_entity")
+
+		output = terraform.Output(t, runOptions, "bigquery_connector_id")
+		a.NotEmpty(output)
+
+		output = terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
+		a.NotEmpty(output)
 	})
 }

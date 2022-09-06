@@ -15,18 +15,26 @@ output "kafka_cluster_basic_bootstrap_endpoint" {
 }
 
 output "topic_service_account_key" {
-  value = module.honest_labs_topic_service_account.service_account_kafka_api_key
+  value = module.kafka_topic_service_account.service_account_kafka_api_key
 }
 
 output "topic_service_account_secret" {
-  value     = module.honest_labs_topic_service_account.service_account_kafka_api_secret
+  value     = module.kafka_topic_service_account.service_account_kafka_api_secret
   sensitive = true
 }
 
 output "topic_service_account_id" {
-  value = module.honest_labs_topic_service_account.service_account_id
+  value = module.kafka_topic_service_account.service_account_id
 }
 
 output "kafka_topic_name" {
-  value = module.honest_labs_kafka_topic.topic_name
+  value = module.honest_labs_kafka_topic_example_1.topic_name
+}
+
+output "bigquery_connector_id" {
+  value = module.honest_labs_connector_bigquery_sink.connector_id
+}
+
+output "connector_gcs_sink_connector_id" {
+  value = module.honest_labs_connector_gcs_sink.connector_id
 }

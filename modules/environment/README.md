@@ -5,14 +5,12 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
 | <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | >= 1.2.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.1.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_confluent"></a> [confluent](#provider\_confluent) | >= 1.2.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | >= 3.1.2 |
 
 ## Modules
 
@@ -23,13 +21,12 @@ No modules.
 | Name | Type |
 |------|------|
 | [confluent_environment.env](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/environment) | resource |
-| [random_id.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Confluent Environment name. The name should be start and end the name with alphanumeric characters and can contain hyphens and underscores. | `string` | n/a | yes |
+| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | (Required) Confluent Environment name. The name should be start and end the name with alphanumeric characters and can contain hyphens and underscores. | `string` | n/a | yes |
 
 ## Outputs
 

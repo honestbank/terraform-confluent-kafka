@@ -1,6 +1,6 @@
 resource "confluent_service_account" "admin" {
   display_name = var.admin_service_account_name
-  description  = "Admin service account"
+  description  = "Admin Service Account of Cluster ${var.cluster_id} in Environment ${var.environment_id}"
 }
 
 resource "confluent_role_binding" "admin_environment" {
@@ -17,7 +17,8 @@ resource "confluent_role_binding" "admin_cluster" {
 
 resource "confluent_api_key" "admin_kafka_api_key" {
   display_name = "${confluent_service_account.admin.display_name}-kafka-api-key"
-  description  = "Kafka API Key owned by service account ${confluent_service_account.admin.display_name}"
+  description  = "Kafka API Key that is owned by '${confluent_service_account.admin.display_name}' service account"
+
   owner {
     id          = confluent_service_account.admin.id
     api_version = confluent_service_account.admin.api_version
@@ -40,7 +41,8 @@ resource "confluent_api_key" "admin_kafka_api_key" {
 
 resource "confluent_api_key" "admin_cloud_api_key" {
   display_name = "${confluent_service_account.admin.display_name}-cloud-api-key"
-  description  = "Cloud API Key owned by service account ${confluent_service_account.admin.display_name}"
+  description  = "Cloud API Key that is owned by '${confluent_service_account.admin.display_name}' service account"
+
   owner {
     id          = confluent_service_account.admin.id
     api_version = confluent_service_account.admin.api_version
@@ -51,4 +53,3 @@ resource "confluent_api_key" "admin_cloud_api_key" {
     confluent_role_binding.admin_environment
   ]
 }
-
