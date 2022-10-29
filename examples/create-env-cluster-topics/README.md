@@ -39,19 +39,23 @@ No requirements.
 | <a name="input_confluent_cloud_api_secret"></a> [confluent\_cloud\_api\_secret](#input\_confluent\_cloud\_api\_secret) | Confluent Cloud API Secret | `string` | n/a | yes |
 | <a name="input_confluent_cloud_email"></a> [confluent\_cloud\_email](#input\_confluent\_cloud\_email) | Confluent Cloud Email | `string` | n/a | yes |
 | <a name="input_confluent_cloud_password"></a> [confluent\_cloud\_password](#input\_confluent\_cloud\_password) | Confluent Cloud Password | `string` | n/a | yes |
+| <a name="input_create_bigquery_sink"></a> [create\_bigquery\_sink](#input\_create\_bigquery\_sink) | Controls the creation of the BigQuery sink module. | `bool` | `true` | no |
+| <a name="input_create_gcs_sink"></a> [create\_gcs\_sink](#input\_create\_gcs\_sink) | Controls the creation of the GCS sink module. | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment/stage | `string` | `"local"` | no |
-| <a name="input_google_credentials"></a> [google\_credentials](#input\_google\_credentials) | Google Credentials JSON | `string` | n/a | yes |
+| <a name="input_google_credentials"></a> [google\_credentials](#input\_google\_credentials) | Google Credentials JSON | `string` | `""` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | <a name="output_bigquery_connector_id"></a> [bigquery\_connector\_id](#output\_bigquery\_connector\_id) | n/a |
+| <a name="output_cluster_admin_privilege_service_account_id"></a> [cluster\_admin\_privilege\_service\_account\_id](#output\_cluster\_admin\_privilege\_service\_account\_id) | The ID of the cluster admin service account. |
 | <a name="output_connector_gcs_sink_connector_id"></a> [connector\_gcs\_sink\_connector\_id](#output\_connector\_gcs\_sink\_connector\_id) | n/a |
 | <a name="output_environment_id"></a> [environment\_id](#output\_environment\_id) | n/a |
 | <a name="output_environment_name"></a> [environment\_name](#output\_environment\_name) | n/a |
 | <a name="output_kafka_cluster_basic_bootstrap_endpoint"></a> [kafka\_cluster\_basic\_bootstrap\_endpoint](#output\_kafka\_cluster\_basic\_bootstrap\_endpoint) | n/a |
 | <a name="output_kafka_cluster_basic_name"></a> [kafka\_cluster\_basic\_name](#output\_kafka\_cluster\_basic\_name) | n/a |
+| <a name="output_kafka_cluster_id"></a> [kafka\_cluster\_id](#output\_kafka\_cluster\_id) | n/a |
 | <a name="output_kafka_topic_name"></a> [kafka\_topic\_name](#output\_kafka\_topic\_name) | n/a |
 | <a name="output_topic_service_account_id"></a> [topic\_service\_account\_id](#output\_topic\_service\_account\_id) | n/a |
 | <a name="output_topic_service_account_key"></a> [topic\_service\_account\_key](#output\_topic\_service\_account\_key) | n/a |

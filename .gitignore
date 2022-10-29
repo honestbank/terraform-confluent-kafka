@@ -12,6 +12,9 @@
 # ##########################################################
 # Project-specific ignores - use for excluding binaries, etc
 
+# Confluent Kafka Module Schema Registry Results
+**/schema-registry-*.txt
+
 # #######
 # General
 
@@ -180,6 +183,9 @@ Temporary Items
 # .tfstate files
 *.tfstate
 *.tfstate.*
+
+# GCP JSON keyfiles
+**/*.json
 
 # Crash log files
 crash.log

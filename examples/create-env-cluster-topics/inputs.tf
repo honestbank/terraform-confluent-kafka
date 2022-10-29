@@ -20,6 +20,18 @@ variable "confluent_cloud_password" {
   sensitive   = true
 }
 
+variable "create_bigquery_sink" {
+  default     = true
+  description = "Controls the creation of the BigQuery sink module."
+  type        = bool
+}
+
+variable "create_gcs_sink" {
+  default     = true
+  description = "Controls the creation of the GCS sink module."
+  type        = bool
+}
+
 variable "environment" {
   type        = string
   description = "Environment/stage"
@@ -27,6 +39,7 @@ variable "environment" {
 }
 
 variable "google_credentials" {
+  default     = ""
   type        = string
   sensitive   = true
   description = "Google Credentials JSON"
