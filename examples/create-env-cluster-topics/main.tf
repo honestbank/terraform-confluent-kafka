@@ -118,6 +118,8 @@ locals {
 }
 
 module "honest_labs_connector_bigquery_sink" {
+  count = (var.create_bigquery_sink ? 1 : 0)
+
   source = "../../modules/connector"
 
   environment_id = module.honest_labs_environment.environment_id
@@ -147,6 +149,8 @@ module "honest_labs_connector_bigquery_sink" {
 }
 
 module "honest_labs_connector_gcs_sink" {
+  count = (var.create_gcs_sink ? 1 : 0)
+
   source = "../../modules/connector"
 
   environment_id = module.honest_labs_environment.environment_id
