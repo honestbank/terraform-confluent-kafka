@@ -13,8 +13,6 @@ import (
 )
 
 func TestKsqldbCluster(t *testing.T) {
-	t.Parallel()
-
 	runID := strings.ToLower(random.UniqueId())
 
 	clusterName := "test-cluster-" + runID
@@ -58,7 +56,6 @@ func TestKsqldbCluster(t *testing.T) {
 
 	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
 		a := assert.New(t)
-		t.Parallel()
 		//workingDir = test_structure.CopyTerraformFolderToTemp(t, "..", "examples/ksql-cluster")
 		runOptions := &terraform.Options{}
 		test_structure.RunTestStage(t, "create topics", func() {
