@@ -146,6 +146,8 @@ module "honest_labs_connector_bigquery_sink" {
   config_sensitive = {
     "keyfile" : var.google_credentials,
   }
+
+  depends_on = [module.enable_schema_registry]
 }
 
 module "honest_labs_connector_gcs_sink" {
@@ -174,4 +176,6 @@ module "honest_labs_connector_gcs_sink" {
   config_sensitive = {
     "gcs.credentials.config" = var.google_credentials
   }
+
+  depends_on = [module.enable_schema_registry]
 }

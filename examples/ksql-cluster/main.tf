@@ -24,4 +24,6 @@ module "ksqldb_cluster" {
   environment_id            = module.ksqldb_prerequisites.environment_id
   kafka_cluster_id          = module.ksqldb_prerequisites.kafka_cluster_id
   service_account_id        = module.ksqldb_prerequisites.cluster_admin_privilege_service_account_id
+
+  depends_on = [module.ksqldb_prerequisites]
 }
