@@ -8,9 +8,9 @@ output "api_version" {
   value       = module.ksqldb_cluster.api_version
 }
 
-output "http_endpoint" {
+output "rest_endpoint" {
   description = "The API endpoint of this ksqlDB cluster."
-  value       = module.ksqldb_cluster.http_endpoint
+  value       = module.ksqldb_cluster.rest_endpoint
 }
 
 output "storage" {

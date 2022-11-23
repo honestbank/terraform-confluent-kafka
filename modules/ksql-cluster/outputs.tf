@@ -3,9 +3,9 @@ output "api_version" {
   value       = confluent_ksql_cluster.ksqldb_cluster.api_version
 }
 
-output "http_endpoint" {
+output "rest_endpoint" {
   description = "The API endpoint of this ksqlDB cluster."
-  value       = confluent_ksql_cluster.ksqldb_cluster.http_endpoint
+  value       = confluent_ksql_cluster.ksqldb_cluster.rest_endpoint
 }
 
 output "id" {
