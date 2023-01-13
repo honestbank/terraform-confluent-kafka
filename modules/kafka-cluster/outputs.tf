@@ -10,7 +10,7 @@ output "kafka_cluster_id" {
 
 output "kafka_cluster_type" {
   description = "Type of Cluster"
-  value       = (var.cluster_for_production) ? "basic" : "standard"
+  value       = length(confluent_kafka_cluster.cluster.basic) > 0 ? "basic" : (length(confluent_kafka_cluster.cluster.standard) > 0 ? "standard" : "dedicated")
 }
 
 output "bootstrap_endpoint" {

@@ -2,13 +2,6 @@ variable "environment_id" {
   description = "(Required) The ID of the Environment that the Kafka cluster belongs to, for example, `env-abc123`"
   type        = string
 }
-
-variable "cluster_for_production" {
-  description = "Is this cluster for production. `false` cluster type is `basic` - for learning and exploring Kafka and Confluent Cloud. `true` cluster type is `standard` for production-ready use cases. Full feature set and standard limits."
-  type        = bool
-  default     = false
-}
-
 variable "kafka_cluster_name" {
   description = "(Required) The name of the Kafka cluster."
   type        = string
@@ -30,5 +23,26 @@ variable "region" {
   description = "The cloud service provider region where the Kafka cluster is running - see supported list - https://docs.confluent.io/cloud/current/clusters/regions.html#cloud-providers-and-regions"
   type        = string
   default     = "asia-southeast2"
+}
 
+variable "cluster_type" {
+  description = "The value can be either basic, standard, and dedicated."
+  type        = string
+  default     = "basic"
+  validation {
+    condition     = can(regex("^(basic|standard|dedicated)$", var.cluster_type))
+    error_message = "Invalid input, only mentioned options can be used: \"basic\", \"standard\", \"dedicated\""
+  }
+}
+
+variable "dedicated_cluster_cku" {
+  description = "The number of Confluent Kafka Units (CKUs) for Dedicated cluster types. The minimum number of CKUs for SINGLE_ZONE dedicated clusters is 1 whereas MULTI_ZONE dedicated clusters must have more than 2 CKUs."
+  type        = number
+  default     = 1
+}
+
+variable "dedicated_network_id" {
+  description = "The Network ID of dedicated cluster for which kafka belongs to. This is only for dedicated cluster setup."
+  type        = string
+  default     = null
 }
