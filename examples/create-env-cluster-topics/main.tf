@@ -30,8 +30,7 @@ module "honest_labs_kafka_cluster_basic" {
 
   environment_id     = module.honest_labs_environment.environment_id
   kafka_cluster_name = "labs-kafka-cluster-${random_id.suffix.hex}"
-
-  cluster_for_production = false
+  cluster_type       = "basic"
 }
 
 module "cluster_admin_privilege_service_account" {
