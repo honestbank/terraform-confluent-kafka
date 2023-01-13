@@ -33,9 +33,9 @@ variable "region" {
 }
 
 variable "cluster_type" {
-  description = "The configuration of the Dedicated Kafka cluster"
+  description = "The value can be either basic, standard, and dedicated"
   type        = string
-  default     = "dedicated"
+  default     = "basic"
 }
 variable "cku" {
   description = "The number of Confluent Kafka Units (CKUs) for Dedicated cluster types. The minimum number of CKUs for SINGLE_ZONE dedicated clusters is 1 whereas MULTI_ZONE dedicated clusters must have more than 2 CKUs."
