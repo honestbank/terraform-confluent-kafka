@@ -4,16 +4,8 @@ permissions: read-all
 on:
   pull_request:
     branches:
-      - test
-      - dev
-      - qa
-      - prod
-  push:
-    branches:
-      - test
-      - dev
-      - qa
-      - prod
+      - main
+
   schedule:
     # * is a special character in YAML so you have to quote this string
     # schedule a job to run every day at 17:30 UTC

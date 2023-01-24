@@ -4,18 +4,9 @@ on:
   pull_request:
     branches:
       - main
-      - test
-      - dev
-      - qa
-      - prod
-
   push:
     branches:
       - main
-      - test
-      - dev
-      - qa
-      - prod
 
 env:
   TERRATEST_CONFLUENT_CLOUD_SEED_KEY: ${{ secrets.TERRATEST_CONFLUENT_CLOUD_SEED_KEY }}

@@ -6,10 +6,7 @@ permissions:
 on:
   pull_request:
     branches:
-      - test
-      - dev
-      - qa
-      - prod
+      - main
 env:
   tf_version: "latest"
   tf_working_dir: "."
