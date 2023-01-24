@@ -1,4 +1,4 @@
-name: "Semantic PR Repository Workflow"
+name: "repository-semantic-pr"
 permissions: read-all
 
 on:
@@ -10,6 +10,6 @@ on:
 
 jobs:
   main:
-    name: semantic-pull-request-repository-job
+    name: repository-semantic-pr
     uses: honestbank/workflows/.github/workflows/general-semantic-pr.yaml@main
     secrets: inherit

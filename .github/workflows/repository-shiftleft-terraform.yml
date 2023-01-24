@@ -1,4 +1,4 @@
-name: "ShiftLeft Terraform Workflow"
+name: "repository-shiftleft-terraform"
 permissions: read-all
 
 on:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   main:
-    name: shiftleft-terraform-repository-job
+    name: repository-shiftleft-terraform
     uses: honestbank/workflows/.github/workflows/terraform-shiftleft.yaml@main
     with:
       repo_name: ${{ github.event.repository.name }}

@@ -1,4 +1,4 @@
-name: terratest
+name: repository-terratest
 permissions: read-all
 on:
   pull_request:
@@ -17,8 +17,8 @@ env:
   TERRATEST_GOOGLE_PROJECT_STORAGE: ${{ secrets.TERRATEST_GOOGLE_PROJECT_STORAGE }}
 
 jobs:
-  terratest:
-    name: terratest
+  repository-terratest:
+    name: repository-terratest
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory

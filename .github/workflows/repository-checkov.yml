@@ -1,4 +1,4 @@
-name: "Checkov Repository Workflow"
+name: "repository-checkov"
 permissions: read-all
 
 on:
@@ -8,6 +8,6 @@ on:
 
 jobs:
   main:
-    name: checkov-repository-job
+    name: repository-checkov
     uses: honestbank/workflows/.github/workflows/checkov.yaml@main
     secrets: inherit

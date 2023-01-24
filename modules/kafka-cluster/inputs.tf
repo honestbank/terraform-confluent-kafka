@@ -36,9 +36,13 @@ variable "cluster_type" {
 }
 
 variable "dedicated_cluster_cku" {
-  description = "The number of Confluent Kafka Units (CKUs) for Dedicated cluster types. The minimum number of CKUs for SINGLE_ZONE dedicated clusters is 1 whereas MULTI_ZONE dedicated clusters must have more than 2 CKUs."
+  description = "The number of Confluent Kafka Units (CKUs) for Dedicated cluster types. The minimum number of CKUs for SINGLE_ZONE dedicated clusters is 1 whereas MULTI_ZONE dedicated clusters must have more than 2 CKUs, which means >= 2."
   type        = number
   default     = 1
+  validation {
+    condition     = var.dedicated_cluster_cku > 0
+    error_message = "Invalid input, Input value should be greater than 0"
+  }
 }
 
 variable "dedicated_network_id" {

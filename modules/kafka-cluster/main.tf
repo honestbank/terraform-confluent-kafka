@@ -1,7 +1,7 @@
 locals {
-  basic_cluster_type     = "basic"
-  standard_cluster_type  = "standard"
-  dedicated_cluster_type = "dedicated"
+  confluent_kafka_cluster_type_basic     = "basic"
+  confluent_kafka_cluster_type_standard  = "standard"
+  confluent_kafka_cluster_type_dedicated = "dedicated"
 }
 
 resource "confluent_kafka_cluster" "cluster" {
@@ -11,19 +11,19 @@ resource "confluent_kafka_cluster" "cluster" {
   region       = var.region
 
   dynamic "basic" {
-    for_each = var.cluster_type == local.basic_cluster_type ? [1] : []
+    for_each = var.cluster_type == local.confluent_kafka_cluster_type_basic ? [1] : []
 
     content {}
   }
 
   dynamic "standard" {
-    for_each = var.cluster_type == local.standard_cluster_type ? [1] : []
+    for_each = var.cluster_type == local.confluent_kafka_cluster_type_standard ? [1] : []
 
     content {}
   }
 
   dynamic "dedicated" {
-    for_each = var.cluster_type == local.dedicated_cluster_type ? [1] : []
+    for_each = var.cluster_type == local.confluent_kafka_cluster_type_dedicated ? [1] : []
 
     content {
       cku = var.dedicated_cluster_cku
@@ -35,7 +35,7 @@ resource "confluent_kafka_cluster" "cluster" {
   }
 
   dynamic "network" {
-    for_each = var.cluster_type == local.dedicated_cluster_type ? [1] : []
+    for_each = var.cluster_type == local.confluent_kafka_cluster_type_dedicated ? [1] : []
 
     content {
       id = var.dedicated_network_id
