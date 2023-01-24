@@ -9,7 +9,11 @@ on:
       - synchronize
 
 jobs:
-  main:
-    name: repository-semantic-pr
-    uses: honestbank/workflows/.github/workflows/general-semantic-pr.yaml@main
-    secrets: inherit
+  repository-semantic-pr:
+    name: "repository-semantic-pr"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v4
+        name: Semantic Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

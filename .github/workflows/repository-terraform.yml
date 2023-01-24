@@ -5,12 +5,12 @@ permissions:
   pull-requests: write
 
 on:
-  workflow_call:
-    inputs:
-      repo_name:
-        description: "caller repository name"
-        required: true
-        type: string
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 env:
   tf_version: "latest"

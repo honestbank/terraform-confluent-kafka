@@ -12,7 +12,7 @@ on:
     - cron: "30 17 * * *"
 
 jobs:
-  main:
+  repository-shiftleft-terraform:
     name: repository-shiftleft-terraform
     uses: honestbank/workflows/.github/workflows/terraform-shiftleft.yaml@main
     with:
