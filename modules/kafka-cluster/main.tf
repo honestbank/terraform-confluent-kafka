@@ -22,14 +22,15 @@ resource "confluent_kafka_cluster" "cluster" {
 
   dynamic "dedicated" {
     for_each = var.cluster_type == local.dedicated_cluster_type ? [1] : []
-
     content {
       cku = var.dedicated_cluster_cku
     }
   }
+
   environment {
     id = var.environment_id
   }
+
   dynamic "network" {
     for_each = var.cluster_type == local.dedicated_cluster_type ? [1] : []
     content {
