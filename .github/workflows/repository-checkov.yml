@@ -7,8 +7,8 @@ on:
       - main
 
 jobs:
-  shared-checkov:
-    name: shared-checkov
+  repository-checkov:
+    name: repository-checkov
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
