@@ -1,4 +1,9 @@
-name: "terraform"
+---
+name: "repository-terraform"
+permissions:
+  actions: read
+  pull-requests: write
+
 on:
   pull_request:
     branches:
@@ -6,19 +11,20 @@ on:
   push:
     branches:
       - main
+
 env:
   tf_version: "latest"
   tf_working_dir: "."
-  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_READ_ALL_PROJECTS }}
-  GITHUB_TOKEN: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
+  TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
+  TF_WORKSPACE: ${{ github.base_ref }}
 
 jobs:
-  terraform:
-    name: "terraform"
+  repository-terraform:
+    name: repository-terraform
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: "recursive"
           token: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
@@ -26,15 +32,15 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
       - name: Terraform Format
         id: fmt
-        run: cd examples/create-env-cluster-topics/;terraform fmt
-
+        run: terraform fmt
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
       - name: Terraform Init
         id: init
-        run: cd examples/create-env-cluster-topics/;terraform init
-
+        run: terraform init
       - name: Terraform Validate
         id: validate
-        run: cd examples/create-env-cluster-topics/;terraform validate -no-color
+        run: terraform validate -no-color

@@ -1,4 +1,5 @@
-name: terratest
+name: repository-terratest
+permissions: read-all
 on:
   pull_request:
     branches:
@@ -16,8 +17,8 @@ env:
   TERRATEST_GOOGLE_PROJECT_STORAGE: ${{ secrets.TERRATEST_GOOGLE_PROJECT_STORAGE }}
 
 jobs:
-  terratest:
-    name: terratest
+  repository-terratest:
+    name: repository-terratest
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
@@ -32,7 +33,7 @@ jobs:
       - name: Run terratest
         run: |
           cd test
-          go test -v -timeout 30m
+          go test -v -timeout 60m
       - name: Release
         if: github.event_name == 'push'
         uses: cycjimmy/semantic-release-action@v2

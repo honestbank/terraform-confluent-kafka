@@ -1,11 +1,14 @@
-name: "checkov"
+name: "repository-checkov"
+permissions: read-all
+
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  checkov-internal-job:
-    name: checkov
+  repository-checkov:
+    name: repository-checkov
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
