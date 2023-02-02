@@ -56,14 +56,12 @@ func TestDedicatedConfluentCluster(t *testing.T) {
 
 	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
 		a := assert.New(t)
-		//workingDir = test_structure.CopyTerraformFolderToTemp(t, "..", "examples/ksql-cluster")
 		runOptions := &terraform.Options{}
-		test_structure.RunTestStage(t, "create topics", func() {
+		test_structure.RunTestStage(t, "create_cluster", func() {
 			runOptions = terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 				TerraformDir: workingDir,
-				EnvVars:      map[string]string{},
+				EnvVars:     map[string]string{},
 				Vars: map[string]interface{}{
-					"environment":                runID,
 					"confluent_cloud_api_key":    cloudAPIKey,
 					"confluent_cloud_api_secret": cloudAPISecret,
 					"confluent_cloud_email":      confluentCloudEmail,

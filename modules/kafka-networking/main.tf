@@ -1,5 +1,6 @@
 data "google_compute_zones" "available" {
-  region = var.region
+  region  = var.region
+  project = var.gcp_project_id
 }
 
 ##########################################################
@@ -11,7 +12,7 @@ resource "confluent_network" "dedicated_kafka_network" {
   cloud            = var.cloud
   region           = var.region
   cidr             = var.confluent_cidr_range
-  zones            = [data.google_compute_zones.available.names]
+  zones            = data.google_compute_zones.available.names
   connection_types = [var.confluent_connection_types]
   environment {
     id = var.environment_id

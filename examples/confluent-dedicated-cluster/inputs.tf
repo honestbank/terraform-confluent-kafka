@@ -30,5 +30,5 @@ variable "google_credentials" {
 variable "environment" {
   type        = string
   description = "Environment/stage"
-  default     = "labs"
+  default     = "local"
 }
