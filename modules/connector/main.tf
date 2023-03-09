@@ -44,4 +44,10 @@ resource "confluent_connector" "connector" {
   config_nonsensitive = local.config_nonsensitive
 
   config_sensitive = local.config_sensitive
+
+  lifecycle {
+    ignore_changes = [
+      status,
+    ]
+  }
 }
