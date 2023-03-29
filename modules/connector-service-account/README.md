@@ -21,6 +21,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [confluent_kafka_acl.app_connector_read_on_connect_lcc_group](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
+| [confluent_kafka_acl.connector_can_read_topics](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
 | [confluent_kafka_acl.connector_create_on_dlq_lcc_topics](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
 | [confluent_kafka_acl.connector_describe_on_cluster](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
 | [confluent_kafka_acl.connector_write_on_dlq_lcc_topics](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/kafka_acl) | resource |
@@ -31,6 +32,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_kafka_cluster_id"></a> [kafka\_cluster\_id](#input\_kafka\_cluster\_id) | (Required) The id of the kafka cluster | `string` | n/a | yes |
 | <a name="input_service_account_id"></a> [service\_account\_id](#input\_service\_account\_id) | (Required) The ID of the service account responsible for managing kafka connector | `string` | n/a | yes |
+| <a name="input_topics"></a> [topics](#input\_topics) | List of topics to which the connector service account should get READ access. | `list(string)` | `[]` | no |
 
 ## Outputs
 
