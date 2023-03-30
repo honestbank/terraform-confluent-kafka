@@ -91,7 +91,7 @@ module "honest_labs_kafka_topic_example_1" {
   topic_name                   = "squad_raw_service_example_1_entity"
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
 
-  max_compaction_lag_ms              = "9223372036854775807"
+  max_compaction_lag_ms              = "9223372036854775807" # maximum value which is 292271023.05 years.
   delete_retention_ms                = "100"
   message_timestamp_difference_mx_ms = "9223372036854775807"
   min_compaction_lag_ms              = "0"
