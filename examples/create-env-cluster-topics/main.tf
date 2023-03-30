@@ -95,7 +95,7 @@ module "honest_labs_kafka_topic_example_1" {
   delete_retention_ms                = "100"
   message_timestamp_difference_mx_ms = "9223372036854775807"
   min_compaction_lag_ms              = "0"
-  retention_bytes = "-1"
+  retention_bytes                    = "-1"
 
   depends_on = [module.cluster_admin_privilege_service_account]
 }
