@@ -90,7 +90,14 @@ module "honest_labs_kafka_topic_example_1" {
   service_account_id           = module.kafka_topic_service_account.service_account_id
   topic_name                   = "squad_raw_service_example_1_entity"
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
-  depends_on                   = [module.cluster_admin_privilege_service_account]
+
+  max_compaction_lag_ms              = "9223372036854775807"
+  delete_retention_ms                = "100"
+  message_timestamp_difference_mx_ms = "9223372036854775807"
+  min_compaction_lag_ms              = "0"
+  retention_bytes = "-1"
+
+  depends_on = [module.cluster_admin_privilege_service_account]
 }
 
 module "honest_labs_kafka_topic_example_2" {

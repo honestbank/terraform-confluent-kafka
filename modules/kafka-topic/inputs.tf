@@ -31,10 +31,43 @@ variable "delete_policy" {
   default     = "delete"
 }
 
+variable "delete_retention_ms" {
+  type        = string
+  description = "The amount of time to retain delete tombstone markers for log compacted topics."
+  default     = null
+}
+
+variable "max_compaction_lag_ms" {
+  type        = string
+  default     = null
+  description = "The maximum time a message will remain ineligible for compaction in the log. Only applicable for logs that are being compacted."
+}
+
 variable "max_message_bytes" {
   type        = string
   description = "Maximum size of a message in bytes"
   default     = "2097164"
+}
+
+variable "message_timestamp_difference_mx_ms" {
+  type        = string
+  default     = null
+  description = <<EOF
+    The maximum difference allowed between the timestamp when a broker receives a message and the timestamp specified in the message. If message.timestamp.type=CreateTime, a message will be rejected if the difference in timestamp exceeds this threshold.
+    This configuration is ignored if message.timestamp.type=LogAppendTime.
+  EOF
+}
+
+variable "message_timestamp_type" {
+  type        = string
+  default     = null
+  description = "Define whether the timestamp in the message is message create time or log append time. The value should be either CreateTime or LogAppendTime"
+}
+
+variable "min_compaction_lag_ms" {
+  type        = string
+  default     = null
+  description = "The minimum time a message will remain uncompacted in the log. Only applicable for logs that are being compacted."
 }
 
 variable "consumer_prefix" {
@@ -45,4 +78,10 @@ variable "consumer_prefix" {
 variable "connector_service_account_id" {
   type        = string
   description = "(Required) The ID of the service account managing kafka connector"
+}
+
+variable "retention_bytes" {
+  type        = string
+  default     = null
+  description = "This configuration controls the maximum size a partition (which consists of log segments) can grow to before we will discard old log segments to free up space if we are using the “delete” retention policy. By default there is no size limit only a time limit. Since this limit is enforced at the partition level, multiply it by the number of partitions to compute the topic retention in bytes."
 }
