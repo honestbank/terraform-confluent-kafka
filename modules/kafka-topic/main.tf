@@ -19,10 +19,17 @@ resource "confluent_kafka_topic" "topic" {
   }
   topic_name       = var.topic_name
   partitions_count = var.partition_count
+
   config = {
-    "cleanup.policy"    = var.delete_policy
-    "max.message.bytes" = var.max_message_bytes
-    "retention.ms"      = var.retention_ms
+    "cleanup.policy"                      = var.delete_policy
+    "delete.retention.ms"                 = var.delete_retention_ms
+    "max.message.bytes"                   = var.max_message_bytes
+    "max.compaction.lag.ms"               = var.max_compaction_lag_ms
+    "message.timestamp.type"              = var.message_timestamp_type
+    "message.timestamp.difference.max.ms" = var.message_timestamp_difference_mx_ms
+    "min.compaction.lag.ms"               = var.min_compaction_lag_ms
+    "retention.ms"                        = var.retention_ms
+    "retention.bytes"                     = var.retention_bytes
   }
 }
 
