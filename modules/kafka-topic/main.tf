@@ -71,6 +71,7 @@ resource "confluent_kafka_acl" "kafka_acl_consumer" {
   host          = local.HOST_WILDCARD
   operation     = local.OPERATION_READ
   permission    = local.PERMISSION_ALLOW
+  count         = var.consumer_prefix != null ? 1 : 0
 }
 
 resource "confluent_kafka_acl" "connector_read_target_topic" {
