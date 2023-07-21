@@ -32,7 +32,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | (Required) The ID of the cluster | `string` | n/a | yes |
 | <a name="input_connector_service_account_id"></a> [connector\_service\_account\_id](#input\_connector\_service\_account\_id) | (Required) The ID of the service account managing kafka connector | `string` | n/a | yes |
-| <a name="input_consumer_prefix"></a> [consumer\_prefix](#input\_consumer\_prefix) | (Required) The prefix of the consumer group, by default | `string` | n/a | yes |
+| <a name="input_consumer_prefix"></a> [consumer\_prefix](#input\_consumer\_prefix) | The prefix of the consumer group, meant for the consumer access control. By default no access control for consumers. | `string` | `null` | no |
 | <a name="input_delete_policy"></a> [delete\_policy](#input\_delete\_policy) | Delete policy, available values: delete or compact | `string` | `"delete"` | no |
 | <a name="input_delete_retention_ms"></a> [delete\_retention\_ms](#input\_delete\_retention\_ms) | The amount of time to retain delete tombstone markers for log compacted topics. | `string` | `null` | no |
 | <a name="input_max_compaction_lag_ms"></a> [max\_compaction\_lag\_ms](#input\_max\_compaction\_lag\_ms) | The maximum time a message will remain ineligible for compaction in the log. Only applicable for logs that are being compacted. | `string` | `null` | no |

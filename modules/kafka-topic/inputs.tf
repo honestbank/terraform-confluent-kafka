@@ -72,7 +72,8 @@ variable "min_compaction_lag_ms" {
 
 variable "consumer_prefix" {
   type        = string
-  description = "(Required) The prefix of the consumer group, by default"
+  description = "The prefix of the consumer group, meant for the consumer access control. By default no access control for consumers."
+  default     = null
 }
 
 variable "connector_service_account_id" {

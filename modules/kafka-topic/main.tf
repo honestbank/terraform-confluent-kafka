@@ -60,6 +60,8 @@ resource "confluent_kafka_acl" "kafka_acl_read" {
 }
 
 resource "confluent_kafka_acl" "kafka_acl_consumer" {
+  count         = var.consumer_prefix != null ? 1 : 0
+
   kafka_cluster {
     id = var.cluster_id
   }
