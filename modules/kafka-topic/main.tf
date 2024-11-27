@@ -44,6 +44,10 @@ resource "confluent_kafka_acl" "kafka_acl_write" {
   host          = local.HOST_WILDCARD
   operation     = local.OPERATION_WRITE
   permission    = local.PERMISSION_ALLOW
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "confluent_kafka_acl" "kafka_acl_read" {
@@ -57,10 +61,14 @@ resource "confluent_kafka_acl" "kafka_acl_read" {
   host          = local.HOST_WILDCARD
   operation     = local.OPERATION_READ
   permission    = local.PERMISSION_ALLOW
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "confluent_kafka_acl" "kafka_acl_consumer" {
-  count         = var.consumer_prefix != null ? 1 : 0
+  count = var.consumer_prefix != null ? 1 : 0
 
   kafka_cluster {
     id = var.cluster_id
@@ -73,6 +81,10 @@ resource "confluent_kafka_acl" "kafka_acl_consumer" {
   host          = local.HOST_WILDCARD
   operation     = local.OPERATION_READ
   permission    = local.PERMISSION_ALLOW
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "confluent_kafka_acl" "connector_read_target_topic" {
@@ -86,4 +98,8 @@ resource "confluent_kafka_acl" "connector_read_target_topic" {
   host          = local.HOST_WILDCARD
   operation     = local.OPERATION_READ
   permission    = local.PERMISSION_ALLOW
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
