@@ -24,16 +24,4 @@ resource "null_resource" "enable_schema_registry" {
   provisioner "local-exec" {
     command = "./bin/confluent environment use ${var.environment_id}"
   }
-
-  provisioner "local-exec" {
-    command = "./bin/confluent schema-registry cluster enable --cloud ${var.schema_registry_cloud} --geo ${var.schema_registry_geo} 1> schema-registry-result.txt 2> schema-registry-error.txt"
-  }
-
-  provisioner "local-exec" {
-    command = "cat schema-registry-result.txt"
-  }
-
-  provisioner "local-exec" {
-    command = "cat schema-registry-error.txt"
-  }
 }

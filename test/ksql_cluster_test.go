@@ -71,7 +71,7 @@ func TestKsqldbCluster(t *testing.T) {
 			})
 		})
 
-		// Uncomment and remove #L105-107 once ACLs have moved to their own module
+		// Uncomment and remove #L82-84 once ACLs have moved to their own module
 		// defer terraform.Destroy(t, runOptions)
 		terraform.InitAndApply(t, runOptions)
 
@@ -80,7 +80,7 @@ func TestKsqldbCluster(t *testing.T) {
 		output = terraform.Output(t, runOptions, "id")
 		a.NotEmpty(output)
 
-		output = terraform.Destroy(t, runOptions)
+		output, _ = terraform.DestroyE(t, runOptions)
 		a.True(strings.Contains(output, "disable lifecycle.prevent_destroy or reduce the scope of the plan"))
 	})
 }
