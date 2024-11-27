@@ -73,7 +73,8 @@ func TestEnvClusterTopic(t *testing.T) {
 			})
 		})
 
-		defer terraform.Destroy(t, runOptions)
+		// Uncomment and remove #L105-107 once ACLs have moved to their own module
+		// defer terraform.Destroy(t, runOptions)
 		terraform.InitAndApply(t, runOptions)
 
 		var output string
@@ -101,5 +102,8 @@ func TestEnvClusterTopic(t *testing.T) {
 
 		output = terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
 		a.NotEmpty(output)
+
+		output = terraform.Destroy(t, runOptions)
+		a.True(strings.Contains(output, "disable lifecycle.prevent_destroy or reduce the scope of the plan"))
 	})
 }
