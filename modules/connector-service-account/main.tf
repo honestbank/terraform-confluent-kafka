@@ -13,6 +13,10 @@ resource "confluent_kafka_acl" "connector_describe_on_cluster" {
   host          = "*"
   operation     = "DESCRIBE"
   permission    = "ALLOW"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "confluent_kafka_acl" "connector_create_on_dlq_lcc_topics" {
@@ -26,6 +30,10 @@ resource "confluent_kafka_acl" "connector_create_on_dlq_lcc_topics" {
   host          = "*"
   operation     = "CREATE"
   permission    = "ALLOW"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "confluent_kafka_acl" "connector_write_on_dlq_lcc_topics" {
@@ -39,6 +47,10 @@ resource "confluent_kafka_acl" "connector_write_on_dlq_lcc_topics" {
   host          = "*"
   operation     = "WRITE"
   permission    = "ALLOW"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "confluent_kafka_acl" "app_connector_read_on_connect_lcc_group" {
@@ -52,6 +64,10 @@ resource "confluent_kafka_acl" "app_connector_read_on_connect_lcc_group" {
   host          = "*"
   operation     = "READ"
   permission    = "ALLOW"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # See https://docs.confluent.io/cloud/current/connectors/service-account.html#example-configuring-a-service-account
@@ -67,4 +83,8 @@ resource "confluent_kafka_acl" "connector_can_read_topics" {
   host          = "*"
   operation     = "READ"
   permission    = "ALLOW"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
