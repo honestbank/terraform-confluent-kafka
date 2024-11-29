@@ -22,16 +22,19 @@ No modules.
 | Name | Type |
 |------|------|
 | [confluent_api_key.service_account_kafka_api_key](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/api_key) | resource |
+| [confluent_role_binding.service_account_for_metrics](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/role_binding) | resource |
 | [confluent_service_account.service_account](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/service_account) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cluster_api_version"></a> [cluster\_api\_version](#input\_cluster\_api\_version) | API version of the Kafka cluster | `string` | n/a | yes |
-| <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | The ID of the Kafka cluster | `string` | n/a | yes |
-| <a name="input_cluster_kind"></a> [cluster\_kind](#input\_cluster\_kind) | The kind of the Kafka cluster | `string` | n/a | yes |
-| <a name="input_environment_id"></a> [environment\_id](#input\_environment\_id) | The ID of the Confluent environment | `string` | n/a | yes |
+| <a name="input_cluster_api_version"></a> [cluster\_api\_version](#input\_cluster\_api\_version) | API version of the Kafka cluster. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
+| <a name="input_cluster_crn"></a> [cluster\_crn](#input\_cluster\_crn) | The Confluent Resource Name of the Kafka cluster, for example, `crn://confluent.cloud/organization=1111aaaa-11aa-11aa-11aa-111111aaaaaa/environment=env-abc123/cloud-cluster=lkc-abc123`. This value cannot be blank if `is_metrics_service_account` is set to `true` | `string` | `null` | no |
+| <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | The ID of the Kafka cluster. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
+| <a name="input_cluster_kind"></a> [cluster\_kind](#input\_cluster\_kind) | The kind of the Kafka cluster. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
+| <a name="input_environment_id"></a> [environment\_id](#input\_environment\_id) | The ID of the Confluent environment. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
+| <a name="input_is_metrics_service_account"></a> [is\_metrics\_service\_account](#input\_is\_metrics\_service\_account) | Set this value to true if you want to create a service account for metrics export else false | `bool` | `false` | no |
 | <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | The name of the service account | `string` | n/a | yes |
 
 ## Outputs
