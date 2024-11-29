@@ -12,13 +12,24 @@ resource "confluent_api_key" "service_account_kafka_api_key" {
     kind        = confluent_service_account.service_account.kind
   }
 
-  managed_resource {
-    id          = var.cluster_id
-    api_version = var.cluster_api_version
-    kind        = var.cluster_kind
+  dynamic "managed_resource" {
+    # Create managed_resource only if we are not creating a metrics service account
+    for_each = var.is_metrics_service_account ? [] : [true]
+    content {
+      id          = var.cluster_id
+      api_version = var.cluster_api_version
+      kind        = var.cluster_kind
 
-    environment {
-      id = var.environment_id
+      environment {
+        id = var.environment_id
+      }
     }
   }
+}
+
+resource "confluent_role_binding" "service_account_for_metrics" {
+  count       = var.is_metrics_service_account ? 1 : 0
+  principal   = "User:${confluent_service_account.service_account.id}"
+  role_name   = "MetricsViewer"
+  crn_pattern = var.cluster_crn
 }
