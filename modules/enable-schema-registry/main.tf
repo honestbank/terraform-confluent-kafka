@@ -13,7 +13,7 @@ resource "null_resource" "enable_schema_registry" {
   }
 
   provisioner "local-exec" {
-    command = "./bin/confluent login --organization-id ${var.confluent_organization_id} --save"
+    command = "./bin/confluent login --organization ${var.confluent_organization_id} --save"
 
     environment = {
       CONFLUENT_CLOUD_EMAIL    = var.confluent_cloud_email
