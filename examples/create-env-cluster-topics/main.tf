@@ -14,16 +14,16 @@ module "honest_labs_environment" {
   environment_name = "labs-environment-${var.environment}-${random_id.suffix.hex}"
 }
 
-module "enable_schema_registry" {
-  source = "../../modules/enable-schema-registry"
-
-  confluent_cloud_email     = var.confluent_cloud_email
-  confluent_cloud_password  = var.confluent_cloud_password
-  confluent_organization_id = local.confluent_cloud_org_id
-  environment_id            = module.honest_labs_environment.environment_id
-  schema_registry_cloud     = local.schema_registry_cloud
-  schema_registry_geo       = local.schema_registry_geo
-}
+# module "enable_schema_registry" {
+#   source = "../../modules/enable-schema-registry"
+#
+#   confluent_cloud_email     = var.confluent_cloud_email
+#   confluent_cloud_password  = var.confluent_cloud_password
+#   confluent_organization_id = local.confluent_cloud_org_id
+#   environment_id            = module.honest_labs_environment.environment_id
+#   schema_registry_cloud     = local.schema_registry_cloud
+#   schema_registry_geo       = local.schema_registry_geo
+# }
 
 module "honest_labs_kafka_cluster_basic" {
   source = "../../modules/kafka-cluster"
@@ -123,38 +123,38 @@ locals {
   ]
 }
 
-module "honest_labs_connector_bigquery_sink" {
-  count = (var.create_bigquery_sink == true ? 1 : 0)
-
-  source = "../../modules/connector"
-
-  environment_id = module.honest_labs_environment.environment_id
-  cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-
-  connector_class          = "BigQuerySink"
-  connector_name           = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
-  input_data_format        = "AVRO"
-  topics                   = local.topics
-  kafka_auth_mode          = "SERVICE_ACCOUNT"
-  kafka_service_account_id = module.honest_labs_connector_service_account.service_account_id
-  max_number_of_tasks      = "1"
-
-  config_nonsensitive = {
-    "project" : "storage-0994"
-    "datasets" : "terratest"
-    "auto.create.tables" : "false"
-    "sanitize.topics" : "false"
-    "auto.update.schemas" : "false"
-    "sanitize.field.names" : "false"
-    "partitioning.type" : "NONE"
-  }
-
-  config_sensitive = {
-    "keyfile" : var.google_credentials,
-  }
-
-  depends_on = [module.enable_schema_registry]
-}
+# module "honest_labs_connector_bigquery_sink" {
+#   count = (var.create_bigquery_sink == true ? 1 : 0)
+#
+#   source = "../../modules/connector"
+#
+#   environment_id = module.honest_labs_environment.environment_id
+#   cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+#
+#   connector_class          = "BigQuerySink"
+#   connector_name           = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
+#   input_data_format        = "AVRO"
+#   topics                   = local.topics
+#   kafka_auth_mode          = "SERVICE_ACCOUNT"
+#   kafka_service_account_id = module.honest_labs_connector_service_account.service_account_id
+#   max_number_of_tasks      = "1"
+#
+#   config_nonsensitive = {
+#     "project" : "storage-0994"
+#     "datasets" : "terratest"
+#     "auto.create.tables" : "false"
+#     "sanitize.topics" : "false"
+#     "auto.update.schemas" : "false"
+#     "sanitize.field.names" : "false"
+#     "partitioning.type" : "NONE"
+#   }
+#
+#   config_sensitive = {
+#     "keyfile" : var.google_credentials,
+#   }
+#
+#   #depends_on = [module.enable_schema_registry]
+# }
 
 module "honest_labs_connector_gcs_sink" {
   count = (var.create_gcs_sink == true ? 1 : 0)
@@ -183,5 +183,5 @@ module "honest_labs_connector_gcs_sink" {
     "gcs.credentials.config" = var.google_credentials
   }
 
-  depends_on = [module.enable_schema_registry]
+  #depends_on = [module.enable_schema_registry]
 }
