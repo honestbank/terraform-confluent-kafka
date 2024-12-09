@@ -59,22 +59,6 @@ resource "confluent_kafka_acl" "kafka_acl_read" {
   permission    = local.PERMISSION_ALLOW
 }
 
-resource "confluent_kafka_acl" "kafka_acl_consumer" {
-  count         = var.consumer_prefix != null ? 1 : 0
-
-  kafka_cluster {
-    id = var.cluster_id
-  }
-  resource_type = local.RESOURCE_TYPE_GROUP
-
-  resource_name = var.consumer_prefix
-  pattern_type  = local.PATTERN_TYPE_PREFIXED
-  principal     = "User:${var.service_account_id}"
-  host          = local.HOST_WILDCARD
-  operation     = local.OPERATION_READ
-  permission    = local.PERMISSION_ALLOW
-}
-
 resource "confluent_kafka_acl" "connector_read_target_topic" {
   kafka_cluster {
     id = var.cluster_id

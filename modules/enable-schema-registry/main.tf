@@ -5,7 +5,7 @@ resource "null_resource" "enable_schema_registry" {
   }
 
   provisioner "local-exec" {
-    command = "curl -sL --http1.1 https://cnfl.io/cli | sh -s -- latest"
+    command = "curl -sL --http1.1 https://cnfl.io/cli | sh -s -- v3.64.3"
   }
 
   provisioner "local-exec" {
