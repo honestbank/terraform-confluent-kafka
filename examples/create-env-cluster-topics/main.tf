@@ -86,7 +86,6 @@ module "honest_labs_kafka_topic_example_1" {
   }
 
   cluster_id                   = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-  consumer_prefix              = "honest_consumer_"
   service_account_id           = module.kafka_topic_service_account.service_account_id
   topic_name                   = "squad_raw_service_example_1_entity"
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
@@ -109,7 +108,6 @@ module "honest_labs_kafka_topic_example_2" {
   }
 
   cluster_id                   = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
-  consumer_prefix              = "honest_consumer_"
   service_account_id           = module.kafka_topic_service_account.service_account_id
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
   topic_name                   = "squad_raw_service_example_2_entity"
