@@ -70,12 +70,6 @@ variable "min_compaction_lag_ms" {
   default     = null
 }
 
-variable "consumer_prefix" {
-  type        = string
-  description = "The prefix of the consumer group, meant for the consumer access control. By default no access control for consumers."
-  default     = null
-}
-
 variable "connector_service_account_id" {
   type        = string
   description = "(Required) The ID of the service account managing kafka connector"
