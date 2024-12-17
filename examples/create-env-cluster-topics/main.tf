@@ -2,6 +2,12 @@ locals {
   schema_registry_cloud  = "gcp"
   schema_registry_geo    = "apac"
   confluent_cloud_org_id = "137f6bf3-7005-4122-94d2-faf0d17f584c"
+  HOST_WILDCARD          = "*"
+  OPERATION_READ         = "READ"
+  PATTERN_TYPE_PREFIXED  = "PREFIXED"
+  PERMISSION_ALLOW       = "ALLOW"
+  RESOURCE_NAME          = "squad_raw-"
+  RESOURCE_TYPE_GROUP    = "GROUP"
 }
 
 resource "random_id" "suffix" {
@@ -112,6 +118,20 @@ module "honest_labs_kafka_topic_example_2" {
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
   topic_name                   = "squad_raw_service_example_2_entity"
   depends_on                   = [module.cluster_admin_privilege_service_account]
+}
+
+resource "confluent_kafka_acl" "kafka_acl_consumer" {
+  kafka_cluster {
+    id = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  }
+
+  resource_type = local.RESOURCE_TYPE_GROUP
+  resource_name = local.RESOURCE_NAME
+  pattern_type  = local.PATTERN_TYPE_PREFIXED
+  principal     = "User:${module.kafka_topic_service_account.service_account_id}"
+  host          = local.HOST_WILDCARD
+  operation     = local.OPERATION_READ
+  permission    = local.PERMISSION_ALLOW
 }
 
 locals {
