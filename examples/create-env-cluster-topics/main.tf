@@ -121,6 +121,8 @@ module "honest_labs_kafka_topic_example_2" {
 }
 
 resource "confluent_kafka_acl" "kafka_acl_consumer" {
+  provider = confluent.kafka_admin
+
   kafka_cluster {
     id = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   }
