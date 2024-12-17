@@ -39,7 +39,6 @@ output "topic_service_account_id" {
   value = module.kafka_topic_service_account.service_account_id
 }
 
-
 output "topic_service_account_key" {
   value = module.kafka_topic_service_account.service_account_kafka_api_key
 }
@@ -47,4 +46,8 @@ output "topic_service_account_key" {
 output "topic_service_account_secret" {
   value     = module.kafka_topic_service_account.service_account_kafka_api_secret
   sensitive = true
+}
+
+output "kafka_acl_consumer_group_id" {
+  value = confluent_kafka_acl.kafka_acl_consumer.id
 }
