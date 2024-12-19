@@ -17,7 +17,6 @@ env:
   TERRATEST_CONFLUENT_CLOUD_PASSWORD: ${{ secrets.TERRATEST_CONFLUENT_CLOUD_PASSWORD }}
   TERRATEST_GOOGLE_CREDENTIALS_STORAGE: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_STORAGE }}
   TERRATEST_GOOGLE_PROJECT_STORAGE: ${{ secrets.TERRATEST_GOOGLE_PROJECT_STORAGE }}
-  #TF_LOG: DEBUG
 
 jobs:
   repository-terratest:
@@ -37,6 +36,17 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.8.5"
+      - name: Install Confluent CLI
+        run: |
+          # Download and install Confluent CLI
+          curl -sL --http1.1 https://cnfl.io/cli | sh -s -- v3.64.3 -b ./bin
+          # Add ./bin to PATH
+          echo "Adding ./bin to PATH"
+          echo "$PWD/bin" >> $GITHUB_PATH
+          # Explicitly source the updated PATH
+          export PATH=$PATH:$PWD/bin
+          # Verify installation
+          ./bin/confluent --version
       - name: Run terratest
         run: |
           cd test
