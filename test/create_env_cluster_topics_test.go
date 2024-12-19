@@ -1,117 +1,10 @@
-//package test
-//
-//import (
-//	"fmt"
-//	"os"
-//	"strings"
-//	"testing"
-//
-//	"github.com/gruntwork-io/terratest/modules/random"
-//	"github.com/gruntwork-io/terratest/modules/terraform"
-//	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
-//	"github.com/stretchr/testify/assert"
-//)
-//
-//func TestEnvClusterTopic(t *testing.T) {
-//	runID := strings.ToLower(random.UniqueId())
-//
-//	clusterName := "test-cluster-" + runID
-//
-//	applyDestroyTestCaseName := "ApplyAndDestroy-" + clusterName
-//
-//	workingDir := ""
-//
-//	cloudAPIKey, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_SEED_KEY")
-//	if !exist {
-//		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_KEY not set")
-//		os.Exit(1)
-//	}
-//
-//	cloudAPISecret, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET")
-//	if !exist {
-//		fmt.Println("TERRATEST_CONFLUENT_CLOUD_SEED_SECRET not set")
-//		os.Exit(1)
-//	}
-//	fmt.Printf("Got confluent credentials. Key/secret lengths %d/%d\n", len(cloudAPIKey), len(cloudAPISecret))
-//
-//	confluentCloudEmail, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_EMAIL")
-//	if !exist {
-//		fmt.Println("TERRATEST_CONFLUENT_CLOUD_EMAIL not set")
-//		os.Exit(1)
-//	}
-//
-//	confluentCloudPassword, exist := os.LookupEnv("TERRATEST_CONFLUENT_CLOUD_PASSWORD")
-//	if !exist {
-//		fmt.Println("TERRATEST_CONFLUENT_CLOUD_PASSWORD not set")
-//		os.Exit(1)
-//	}
-//	fmt.Printf("Got confluent cloud credential. Email/Password lengths %d/%d\n", len(confluentCloudEmail), len(confluentCloudPassword))
-//
-//	GoogleCredentialsJSON, exist := os.LookupEnv("TERRATEST_GOOGLE_CREDENTIALS_STORAGE")
-//	if !exist {
-//		fmt.Println("TERRATEST_GOOGLE_CREDENTIALS_STORAGE not set")
-//		os.Exit(1)
-//	}
-//	fmt.Printf("Got Google Credentials. lengths %d\n", len(GoogleCredentialsJSON))
-//
-//	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
-//		a := assert.New(t)
-//		workingDir = test_structure.CopyTerraformFolderToTemp(t, "..", "examples/create-env-cluster-topics")
-//		runOptions := &terraform.Options{}
-//		test_structure.RunTestStage(t, "create topics", func() {
-//			runOptions = terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-//				TerraformDir: workingDir,
-//				EnvVars:      map[string]string{},
-//				Vars: map[string]interface{}{
-//					"environment":                runID,
-//					"confluent_cloud_api_key":    cloudAPIKey,
-//					"confluent_cloud_api_secret": cloudAPISecret,
-//					"google_credentials":         GoogleCredentialsJSON,
-//					"confluent_cloud_email":      confluentCloudEmail,
-//					"confluent_cloud_password":   confluentCloudPassword,
-//				},
-//			})
-//		})
-//
-//		defer terraform.Destroy(t, runOptions)
-//		terraform.InitAndApply(t, runOptions)
-//
-//		var output string
-//
-//		output = terraform.Output(t, runOptions, "environment_name")
-//		a.True(strings.Contains(output, "labs-environment-"+runID))
-//
-//		output = terraform.Output(t, runOptions, "environment_id")
-//		a.NotEmpty(output)
-//
-//		output = terraform.Output(t, runOptions, "kafka_cluster_basic_name")
-//		a.True(strings.Contains(output, "labs-kafka-cluster-"))
-//
-//		output = terraform.Output(t, runOptions, "topic_service_account_key")
-//		a.NotEmpty(output)
-//
-//		output = terraform.Output(t, runOptions, "kafka_topic_name")
-//		a.Equal(output, "squad_raw_service_example_1_entity")
-//
-//		output = terraform.Output(t, runOptions, "kafka_topic_name")
-//		a.Equal(output, "squad_raw_service_example_1_entity")
-//
-//		output = terraform.Output(t, runOptions, "bigquery_connector_id")
-//		a.NotEmpty(output)
-//
-//		output = terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
-//		a.NotEmpty(output)
-//
-//		output = terraform.Output(t, runOptions, "kafka_acl_consumer_group_id")
-//		a.NotEmpty(output)
-//	})
-//}
-
 package test
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -125,8 +18,12 @@ import (
 
 func TestEnvClusterTopic(t *testing.T) {
 	runID := strings.ToLower(random.UniqueId())
+
 	clusterName := "test-cluster-" + runID
+
 	applyDestroyTestCaseName := "ApplyAndDestroy-" + clusterName
+
+	workingDir := ""
 
 	// Fetch environment variables
 	cloudAPIKey := os.Getenv("TERRATEST_CONFLUENT_CLOUD_SEED_KEY")
@@ -141,123 +38,128 @@ func TestEnvClusterTopic(t *testing.T) {
 
 	t.Run(applyDestroyTestCaseName, func(t *testing.T) {
 		a := assert.New(t)
-		workingDir := test_structure.CopyTerraformFolderToTemp(t, "..", "examples/create-env-cluster-topics")
+		workingDir = test_structure.CopyTerraformFolderToTemp(t, "..", "examples/create-env-cluster-topics")
+		runOptions := &terraform.Options{}
+		test_structure.RunTestStage(t, "create topics", func() {
+			runOptions = terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+				TerraformDir: workingDir,
+				EnvVars:      map[string]string{},
+				Vars: map[string]interface{}{
+					"environment":                runID,
+					"confluent_cloud_api_key":    cloudAPIKey,
+					"confluent_cloud_api_secret": cloudAPISecret,
+					"google_credentials":         GoogleCredentialsJSON,
+					"confluent_cloud_email":      confluentCloudEmail,
+					"confluent_cloud_password":   confluentCloudPassword,
+				},
+			})
+		})
 
-		// Set up Terraform options
-		runOptions := &terraform.Options{
-			TerraformDir: workingDir,
-			Vars: map[string]interface{}{
-				"environment":                runID,
-				"confluent_cloud_api_key":    cloudAPIKey,
-				"confluent_cloud_api_secret": cloudAPISecret,
-				"confluent_cloud_email":      confluentCloudEmail,
-				"confluent_cloud_password":   confluentCloudPassword,
-				"google_credentials":         GoogleCredentialsJSON,
-			},
-		}
+		defer terraform.Destroy(t, runOptions)
+		terraform.InitAndApply(t, runOptions)
 
-		defer terraform.Destroy(t, runOptions) // Cleanup resources
-		terraform.InitAndApply(t, runOptions)  // Apply Terraform configuration
-
-		// Fetch and assert Terraform outputs
 		var output string
 
 		output = terraform.Output(t, runOptions, "environment_name")
-		a.True(strings.Contains(output, "labs-environment-"+runID), "Environment name is incorrect")
+		a.True(strings.Contains(output, "labs-environment-"+runID))
 
-		output = terraform.Output(t, runOptions, "environment_id")
-		a.NotEmpty(output, "Environment ID should not be empty")
-
-		output = terraform.Output(t, runOptions, "kafka_cluster_basic_name")
-		a.True(strings.Contains(output, "labs-kafka-cluster-"), "Kafka cluster name is incorrect")
-
-		output = terraform.Output(t, runOptions, "topic_service_account_key")
-		a.NotEmpty(output, "Topic service account key should not be empty")
-
-		output = terraform.Output(t, runOptions, "kafka_topic_name")
-		a.Equal(output, "squad_raw_service_example_1_entity", "Kafka topic name is incorrect")
-
-		output = terraform.Output(t, runOptions, "bigquery_connector_id")
-		a.NotEmpty(output, "BigQuery connector ID should not be empty")
-
-		output = terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
-		a.NotEmpty(output, "GCS Sink Connector ID should not be empty")
-
-		//kafkaACLID := terraform.Output(t, runOptions, "kafka_acl_consumer_group_id")
 		envID := terraform.Output(t, runOptions, "environment_id")
 		clusterID := terraform.Output(t, runOptions, "kafka_cluster_id")
 
-		// Step 1: Login, set environment, and Kafka cluster
-		setupConfluentCLI(t, confluentCloudEmail, confluentCloudPassword, envID, clusterID)
+		output = terraform.Output(t, runOptions, "kafka_cluster_basic_name")
+		a.True(strings.Contains(output, "labs-kafka-cluster-"))
 
-		// Step 2: Validate ACL count
-		expectedACLCount := 5 // Replace with your expected count
-		actualACLCount := validateKafkaACLCountWithCLI(t)
-		assert.Equal(t, expectedACLCount, actualACLCount, fmt.Sprintf(
-			"Expected %d ACLs to be created, but found %d", expectedACLCount, actualACLCount))
+		output = terraform.Output(t, runOptions, "topic_service_account_key")
+		a.NotEmpty(output)
 
-		// Step 3: Validate individual ACLs
-		expectedACLs := []struct {
+		output = terraform.Output(t, runOptions, "kafka_topic_name")
+		a.Equal(output, "squad_raw_service_example_1_entity")
+
+		output = terraform.Output(t, runOptions, "kafka_topic_name")
+		a.Equal(output, "squad_raw_service_example_1_entity")
+
+		output = terraform.Output(t, runOptions, "bigquery_connector_id")
+		a.NotEmpty(output)
+
+		output = terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
+		a.NotEmpty(output)
+
+		output = terraform.Output(t, runOptions, "kafka_acl_consumer_group_id")
+		a.NotEmpty(output)
+
+		// Confluent Login, environment, and Kafka cluster setup
+		os.Setenv("CONFLUENT_PLATFORM_PASSWORD", confluentCloudPassword)
+		os.Setenv("CONFLUENT_PLATFORM_EMAIL", confluentCloudEmail)
+		log.Printf("Setting Confluent environment: %s and cluster: %s...", envID, clusterID)
+		runCLICommand(t, "confluent", "env", "use", envID)
+		runCLICommand(t, "confluent", "kafka", "cluster", "use", clusterID)
+
+		// Validate Total ACL Provision
+		expectedTotalACLCount := 11
+		ActualTotalACLCount := validateTotalKafkaACLCountWithCLI(t)
+		assert.Equal(t, expectedTotalACLCount, ActualTotalACLCount, fmt.Sprintf(
+			"Expected %d ACLs to be created, but found %d", expectedTotalACLCount, ActualTotalACLCount))
+
+		// Validate individual ACL combinations count (ResourceType and Operation)
+		individualExpectedACLs := []struct {
 			ResourceType string
-			ResourceName string
 			Operation    string
+			Count        int
 		}{
-			{"GROUP", "squad_raw-", "READ"},
-			{"TOPIC", "squad_raw_service_example_1_entity", "WRITE"},
-			{"CLUSTER", "kafka-cluster", "DESCRIBE"},
+			{"GROUP", "READ", 2},
+			{"TOPIC", "CREATE", 1},
+			{"TOPIC", "WRITE", 3},
+			{"TOPIC", "READ", 4},
+			{"CLUSTER", "DESCRIBE", 1},
 		}
-		validateKafkaACLDetails(t, expectedACLs)
+		validateIndividualKafkaACLDetails(t, individualExpectedACLs)
 	})
 }
 
-// Combined function for CLI login and setup
-func setupConfluentCLI(t *testing.T, email, password, envID, clusterID string) {
-	// Login to Confluent CLI
-	runCLICommand(t, "confluent", "login", "--username", email, "--password", password)
-	fmt.Println("Confluent CLI logged in successfully")
+// Logic to Validate Total ACL Provision via Confluent CLI
+func validateTotalKafkaACLCountWithCLI(t *testing.T) int {
+	output := runCLICommand(t, "confluent", "kafka", "acl", "list", "-o", "json")
+	log.Printf("Kafka ACL CLI Output: %s", output)
 
-	// Set environment
-	runCLICommand(t, "confluent", "env", "use", envID)
-	fmt.Printf("Confluent environment set to %s\n", envID)
+	var acls []map[string]interface{}
+	err := json.Unmarshal([]byte(output), &acls)
+	assert.NoError(t, err, "Failed to parse Kafka ACL JSON output")
 
-	// Set Kafka cluster
-	runCLICommand(t, "confluent", "kafka", "cluster", "use", clusterID)
-	fmt.Printf("Confluent Kafka cluster set to %s\n", clusterID)
-}
-
-// Validate ACL count using Confluent CLI
-func validateKafkaACLCountWithCLI(t *testing.T) int {
-	output := runCLICommand(t, "confluent", "kafka", "acl", "list")
-	fmt.Printf("Kafka ACL CLI Output:\n%s\n", output)
-
-	// Parse ACL count
-	lines := strings.Split(output, "\n")
-	aclCount := 0
-	for _, line := range lines {
-		if strings.Contains(line, "ResourceType:") { // Filter only valid ACL lines
-			aclCount++
-		}
-	}
-	fmt.Printf("Actual ACL count: %d\n", aclCount)
+	aclCount := len(acls)
+	log.Printf("Actual ACL count: %d", aclCount)
 	return aclCount
 }
 
-// Validate individual ACL details
-func validateKafkaACLDetails(t *testing.T, expectedACLs []struct {
+// Logic to validate individual ACL combinations (ResourceType and Operation) via Confluent CLI
+func validateIndividualKafkaACLDetails(t *testing.T, expectedACLs []struct {
 	ResourceType string
-	ResourceName string
 	Operation    string
+	Count        int
 }) {
-	output := runCLICommand(t, "confluent", "kafka", "acl", "list")
-	fmt.Printf("Kafka ACL CLI Output:\n%s\n", output)
 
-	for _, acl := range expectedACLs {
-		aclDetails := fmt.Sprintf("ResourceType: %s, Name: %s, Operation: %s",
-			acl.ResourceType, acl.ResourceName, acl.Operation)
-		assert.True(t, strings.Contains(output, aclDetails), fmt.Sprintf(
-			"Expected ACL '%s' not found in ACL list", aclDetails))
+	output := runCLICommand(t, "confluent", "kafka", "acl", "list", "-o", "json")
+	var acls []map[string]interface{}
+	err := json.Unmarshal([]byte(output), &acls)
+	assert.NoError(t, err, "Failed to parse Kafka ACL JSON output")
+
+	// Count ACLs by ResourceType and Operation
+	actualCounts := make(map[string]int)
+	for _, acl := range acls {
+		key := fmt.Sprintf("%s|%s", acl["resource_type"], acl["operation"])
+		actualCounts[key]++
 	}
-	fmt.Println("All ACL validations successful")
+
+	// Validate actual counts against expected values
+	for _, expected := range expectedACLs {
+		key := fmt.Sprintf("%s|%s", expected.ResourceType, expected.Operation)
+		actualCount := actualCounts[key]
+		assert.Equal(t, expected.Count, actualCount, fmt.Sprintf(
+			"Expected %d ACLs for ResourceType: %s, Operation: %s, but found %d",
+			expected.Count, expected.ResourceType, expected.Operation, actualCount,
+		))
+	}
+
+	log.Println("Individual ACL combination validation successful.")
 }
 
 // Run a generic Confluent CLI command and return output
