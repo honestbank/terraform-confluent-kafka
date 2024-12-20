@@ -31,8 +31,12 @@ output "kafka_cluster_id" {
   value = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
 }
 
-output "kafka_topic_name" {
+output "kafka_topic_name_1" {
   value = module.honest_labs_kafka_topic_example_1.topic_name
+}
+
+output "kafka_topic_name_2" {
+  value = module.honest_labs_kafka_topic_example_2.topic_name
 }
 
 output "topic_service_account_id" {
@@ -46,8 +50,4 @@ output "topic_service_account_key" {
 output "topic_service_account_secret" {
   value     = module.kafka_topic_service_account.service_account_kafka_api_secret
   sensitive = true
-}
-
-output "kafka_acl_consumer_group_id" {
-  value = confluent_kafka_acl.kafka_acl_consumer.id
 }
