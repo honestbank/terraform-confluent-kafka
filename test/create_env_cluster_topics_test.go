@@ -154,7 +154,7 @@ func validateTerraformOutputWithCLI(t *testing.T, envID, environmentName, kafkaC
 	log.Println("Validating Environment ID and Name...")
 	envOutput := runCLICommand(t, "confluent", "env", "describe", envID, "-o", "json")
 	var envDetails map[string]interface{}
-	assert.NoError(t, json.Unmarshal([]byte(envOutput), &envDetails), "Failed to parse environment details")
+	a.NoError(json.Unmarshal([]byte(envOutput), &envDetails), "Failed to parse environment details")
 	a.Equal(envID, envDetails["id"], "Environment ID mismatch")
 	a.Equal(environmentName, envDetails["name"], "Environment Name mismatch")
 	log.Printf("Validated Environment ID '%s' and Name '%s' successfully.", envID, environmentName)
@@ -163,7 +163,7 @@ func validateTerraformOutputWithCLI(t *testing.T, envID, environmentName, kafkaC
 	log.Println("Validating Kafka Cluster ID and Basic Name...")
 	clusterOutput := runCLICommand(t, "confluent", "kafka", "cluster", "describe", kafkaClusterID, "-o", "json")
 	var clusterDetails map[string]interface{}
-	assert.NoError(t, json.Unmarshal([]byte(clusterOutput), &clusterDetails), "Failed to parse Kafka Cluster details")
+	a.NoError(json.Unmarshal([]byte(clusterOutput), &clusterDetails), "Failed to parse Kafka Cluster details")
 	a.Equal(kafkaClusterID, clusterDetails["id"], "Kafka Cluster ID mismatch")
 	a.Equal(kafkaClusterBasicName, clusterDetails["name"], "Kafka Cluster Basic Name mismatch")
 	a.Equal("UP", clusterDetails["status"], "Kafka Cluster Status mismatch")
@@ -173,7 +173,7 @@ func validateTerraformOutputWithCLI(t *testing.T, envID, environmentName, kafkaC
 	log.Println("Validating Kafka Topic Names...")
 	topicOutput := runCLICommand(t, "confluent", "kafka", "topic", "list", "-o", "json")
 	var topics []map[string]interface{}
-	assert.NoError(t, json.Unmarshal([]byte(topicOutput), &topics), "Failed to parse Kafka Topics JSON output")
+	a.NoError(json.Unmarshal([]byte(topicOutput), &topics), "Failed to parse Kafka Topics JSON output")
 	kafkaTopicNames := []string{kafkaTopicName1, kafkaTopicName2}
 
 	// Validate each topic exists in the CLI output
@@ -185,7 +185,7 @@ func validateTerraformOutputWithCLI(t *testing.T, envID, environmentName, kafkaC
 				break
 			}
 		}
-		assert.True(t, found, fmt.Sprintf("Expected topic '%s' not found in Kafka Topics list", expectedTopicName))
+		a.True(found, fmt.Sprintf("Expected topic '%s' not found in Kafka Topics list", expectedTopicName))
 		log.Printf("Validated Kafka Topic '%s' successfully.", expectedTopicName)
 	}
 
@@ -193,7 +193,7 @@ func validateTerraformOutputWithCLI(t *testing.T, envID, environmentName, kafkaC
 	log.Println("Validating Sink Connector IDs...")
 	connectClustersOutput := runCLICommand(t, "confluent", "connect", "cluster", "list", "-o", "json")
 	var connectClusters []map[string]interface{}
-	assert.NoError(t, json.Unmarshal([]byte(connectClustersOutput), &connectClusters), "Failed to parse Connect Clusters JSON output")
+	a.NoError(json.Unmarshal([]byte(connectClustersOutput), &connectClusters), "Failed to parse Connect Clusters JSON output")
 
 	gcsSinkFound := false
 	bigQuerySinkFound := false
@@ -218,7 +218,7 @@ func validateTerraformOutputWithCLI(t *testing.T, envID, environmentName, kafkaC
 	log.Println("Validating Topic Service Account ID...")
 	serviceAccountsOutput := runCLICommand(t, "confluent", "iam", "service-account", "list", "-o", "json")
 	var serviceAccounts []map[string]interface{}
-	assert.NoError(t, json.Unmarshal([]byte(serviceAccountsOutput), &serviceAccounts), "Failed to parse Service Accounts JSON output")
+	a.NoError(json.Unmarshal([]byte(serviceAccountsOutput), &serviceAccounts), "Failed to parse Service Accounts JSON output")
 
 	serviceAccountFound := false
 	for _, serviceAccount := range serviceAccounts {

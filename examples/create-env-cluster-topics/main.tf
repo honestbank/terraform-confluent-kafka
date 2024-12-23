@@ -114,7 +114,6 @@ module "honest_labs_kafka_topic_example_2" {
   depends_on                   = [module.cluster_admin_privilege_service_account]
 }
 
-
 locals {
   topics = [
     module.honest_labs_kafka_topic_example_1.topic_name,
