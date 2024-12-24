@@ -4,14 +4,10 @@ locals {
   confluent_cloud_org_id = "137f6bf3-7005-4122-94d2-faf0d17f584c"
 }
 
-resource "random_id" "suffix" {
-  byte_length = 4
-}
-
 module "honest_labs_environment" {
   source = "../../modules/environment"
 
-  environment_name = "labs-environment-${var.environment}-${random_id.suffix.hex}"
+  environment_name = var.environment_name
 }
 
 module "enable_schema_registry" {
@@ -29,14 +25,14 @@ module "honest_labs_kafka_cluster_basic" {
   source = "../../modules/kafka-cluster"
 
   environment_id     = module.honest_labs_environment.environment_id
-  kafka_cluster_name = "labs-kafka-cluster-${random_id.suffix.hex}"
+  kafka_cluster_name = var.kafka_cluster_name
   cluster_type       = "basic"
 }
 
 module "cluster_admin_privilege_service_account" {
   source = "../../modules/cluster-admin"
 
-  admin_service_account_name = "labs-cluster-admin-sa-${random_id.suffix.hex}"
+  admin_service_account_name = var.admin_service_account_name
   cluster_api_version        = module.honest_labs_kafka_cluster_basic.cluster_api_version
   cluster_id                 = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   cluster_kind               = module.honest_labs_kafka_cluster_basic.cluster_kind
@@ -52,7 +48,7 @@ module "kafka_topic_service_account" {
   cluster_id           = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   cluster_kind         = module.honest_labs_kafka_cluster_basic.cluster_kind
   environment_id       = module.honest_labs_environment.environment_id
-  service_account_name = "labs-topic-sa-${module.honest_labs_kafka_cluster_basic.kafka_cluster_name}"
+  service_account_name = var.service_account_name
 
   depends_on = [module.cluster_admin_privilege_service_account]
 }
@@ -63,7 +59,7 @@ module "honest_labs_connector_service_account" {
   cluster_id           = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   cluster_kind         = module.honest_labs_kafka_cluster_basic.cluster_kind
   environment_id       = module.honest_labs_environment.environment_id
-  service_account_name = "labs-cluster-connector-sa-${random_id.suffix.hex}"
+  service_account_name = var.connector_service_account_name
 }
 
 module "honest_labs_connector_service_account_grant_permission" {
@@ -87,7 +83,7 @@ module "honest_labs_kafka_topic_example_1" {
 
   cluster_id                   = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   service_account_id           = module.kafka_topic_service_account.service_account_id
-  topic_name                   = "squad_raw_service_example_1_entity"
+  topic_name                   = var.topic_name_1
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
 
   max_compaction_lag_ms              = "9223372036854775807" # maximum value which is 292271023.05 years.
@@ -110,7 +106,7 @@ module "honest_labs_kafka_topic_example_2" {
   cluster_id                   = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
   service_account_id           = module.kafka_topic_service_account.service_account_id
   connector_service_account_id = module.honest_labs_connector_service_account.service_account_id
-  topic_name                   = "squad_raw_service_example_2_entity"
+  topic_name                   = var.topic_name_2
   depends_on                   = [module.cluster_admin_privilege_service_account]
 }
 
@@ -130,7 +126,7 @@ module "honest_labs_connector_bigquery_sink" {
   cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
 
   connector_class          = "BigQuerySink"
-  connector_name           = "labs-confluent-bigquery-sink-${random_id.suffix.hex}"
+  connector_name           = var.bigquery_connector_name
   input_data_format        = "AVRO"
   topics                   = local.topics
   kafka_auth_mode          = "SERVICE_ACCOUNT"
@@ -163,7 +159,7 @@ module "honest_labs_connector_gcs_sink" {
   cluster_id     = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
 
   connector_class          = "GcsSink"
-  connector_name           = "labs-confluent-gcs-sink-${random_id.suffix.hex}"
+  connector_name           = var.gcs_connector_name
   input_data_format        = "AVRO"
   topics                   = local.topics
   kafka_auth_mode          = "SERVICE_ACCOUNT"

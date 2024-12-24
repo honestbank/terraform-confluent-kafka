@@ -19,9 +19,17 @@ import (
 func TestEnvClusterTopic(t *testing.T) {
 	runID := strings.ToLower(random.UniqueId())
 
-	clusterName := "test-cluster-" + runID
+	environmentName := "labs-environment-" + runID
+	kafkaClusterName := "labs-kafka-cluster-" + runID
+	adminServiceAccountName := "labs-cluster-admin-sa-" + runID
+	topicServiceAccountName := "labs-topic-sa-" + runID
+	connectorServiceAccountName := "labs-cluster-connector-sa-" + runID
+	bigQueryConnectorName := "labs-confluent-bigquery-sink-" + runID
+	gcsConnectorName := "labs-confluent-gcs-sink-" + runID
+	kafkaTopicName1 := "squad_raw_service_example_1_entity"
+	kafkaTopicName2 := "squad_raw_service_example_2_entity"
 
-	applyDestroyTestCaseName := "ApplyAndDestroy-" + clusterName
+	applyDestroyTestCaseName := "ApplyAndDestroy-" + environmentName
 
 	workingDir := ""
 
@@ -44,12 +52,20 @@ func TestEnvClusterTopic(t *testing.T) {
 				TerraformDir: workingDir,
 				EnvVars:      map[string]string{},
 				Vars: map[string]interface{}{
-					"environment":                runID,
-					"confluent_cloud_api_key":    confluentCloudAPIKey,
-					"confluent_cloud_api_secret": confluentCloudAPISecret,
-					"google_credentials":         GoogleCredentialsJSON,
-					"confluent_cloud_email":      confluentCloudEmail,
-					"confluent_cloud_password":   confluentCloudPassword,
+					"confluent_cloud_api_key":        confluentCloudAPIKey,
+					"confluent_cloud_api_secret":     confluentCloudAPISecret,
+					"google_credentials":             GoogleCredentialsJSON,
+					"confluent_cloud_email":          confluentCloudEmail,
+					"confluent_cloud_password":       confluentCloudPassword,
+					"environment_name":               environmentName,
+					"kafka_cluster_name":             kafkaClusterName,
+					"admin_service_account_name":     adminServiceAccountName,
+					"connector_service_account_name": connectorServiceAccountName,
+					"service_account_name":           topicServiceAccountName,
+					"topic_name_1":                   kafkaTopicName1,
+					"topic_name_2":                   kafkaTopicName2,
+					"bigquery_connector_name":        bigQueryConnectorName,
+					"gcs_connector_name":             gcsConnectorName,
 				},
 			})
 		})
@@ -57,17 +73,15 @@ func TestEnvClusterTopic(t *testing.T) {
 		defer terraform.Destroy(t, runOptions)
 		terraform.InitAndApply(t, runOptions)
 
+		a := assert.New(t)
+
 		// Fetch Terraform outputs
 		envID := terraform.Output(t, runOptions, "environment_id")
-		environmentName := terraform.Output(t, runOptions, "environment_name")
 		kafkaClusterID := terraform.Output(t, runOptions, "kafka_cluster_id")
 		bigQueryConnectorID := terraform.Output(t, runOptions, "bigquery_connector_id")
 		gcsSinkConnectorID := terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
 		topicServiceAccountID := terraform.Output(t, runOptions, "topic_service_account_id")
-		kafkaClusterBasicName := terraform.Output(t, runOptions, "kafka_cluster_basic_name")
-		kafkaTopicName1 := "squad_raw_service_example_1_entity"
-		kafkaTopicName2 := "squad_raw_service_example_2_entity"
-		kafkaClusterType := "BASIC"
+		connectorServiceAccountID := terraform.Output(t, runOptions, "connector_service_account_id")
 
 		// Confluent Login, environment, and Kafka cluster setup
 		os.Setenv("CONFLUENT_PLATFORM_PASSWORD", confluentCloudPassword)
@@ -76,171 +90,167 @@ func TestEnvClusterTopic(t *testing.T) {
 		runCLICommand(t, "confluent", "env", "use", envID)
 		runCLICommand(t, "confluent", "kafka", "cluster", "use", kafkaClusterID)
 
+		// Validate Environment name with the environmentName input value
+		log.Println("Validating environment name...")
+		envOutput := runCLICommand(t, "confluent", "env", "describe", envID, "-o", "json")
+		var envDetails map[string]interface{}
+		a.NoError(json.Unmarshal([]byte(envOutput), &envDetails), "Failed to parse environment details")
+		a.Equal(environmentName, envDetails["name"], "Environment name is not correct.")
+		log.Printf("Validated environment name '%s' successfully.", environmentName)
+
+		// Validate Kafka Cluster Name
+		log.Println("Validating kafka cluster name, status and type...")
+		clusterOutput := runCLICommand(t, "confluent", "kafka", "cluster", "describe", kafkaClusterID, "-o", "json")
+		var clusterDetails map[string]interface{}
+		a.NoError(json.Unmarshal([]byte(clusterOutput), &clusterDetails), "Failed to parse Kafka cluster details.")
+		a.Equal("BASIC", clusterDetails["type"], "Kafka cluster type is not correct, it should be basic.")
+		a.Equal(kafkaClusterName, clusterDetails["name"], "Kafka cluster name is not same.")
+		a.Equal("UP", clusterDetails["status"], "Kafka cluster status is not UP.")
+		log.Printf("Validated kafka cluster type 'basic', name '%s', and status 'UP' successfully.", kafkaClusterName)
+
+		// Validate Kafka Topic Names
+		log.Println("validating kafka topic names...")
+		topicOutput := runCLICommand(t, "confluent", "kafka", "topic", "list", "-o", "json")
+		var topics []map[string]interface{}
+		a.NoError(json.Unmarshal([]byte(topicOutput), &topics), "Failed to parse kafka topics output")
+		kafkaTopicNames := []string{kafkaTopicName1, kafkaTopicName2}
+
+		// Validate each topic exists in the CLI output
+		for _, expectedTopicName := range kafkaTopicNames {
+			found := false
+			for _, topic := range topics {
+				if topic["name"] == expectedTopicName {
+					found = true
+					break
+				}
+			}
+			a.True(found, fmt.Sprintf("expected topic '%s' not found in kafka topics list", expectedTopicName))
+			log.Printf("Validated kafka topic '%s' successfully.", expectedTopicName)
+		}
+
+		// Validate BigQuery Connector
+		bigQueryConnectorOutput := runCLICommand(t, "confluent", "connect", "cluster", "describe", bigQueryConnectorID, "-o", "json")
+		var bigQueryConnectorDetails map[string]interface{}
+		a.NoError(json.Unmarshal([]byte(bigQueryConnectorOutput), &bigQueryConnectorDetails), "Failed to parse bigQuery connector output.")
+		a.Equal("RUNNING", bigQueryConnectorDetails["connector"].(map[string]interface{})["status"], "bigQuery connector is not running.")
+		a.Equal(bigQueryConnectorName, bigQueryConnectorDetails["connector"].(map[string]interface{})["name"], "bigQuery connector name is not correct.")
+
+		// BigQuery Connector class
+		var actualBigQueryConnectorClass string
+		for _, config := range bigQueryConnectorDetails["configs"].([]interface{}) {
+			configMap := config.(map[string]interface{})
+			if configMap["config"] == "connector.class" {
+				actualBigQueryConnectorClass = configMap["value"].(string)
+				break
+			}
+		}
+		a.Equal("BigQuerySink", actualBigQueryConnectorClass, "BigQuery connector class is not 'BigQuerySink'.")
+
+		// Validate GCS Sink Connector
+		gcsConnectorOutput := runCLICommand(t, "confluent", "connect", "cluster", "describe", gcsSinkConnectorID, "-o", "json")
+		var gcsConnectorDetails map[string]interface{}
+		a.NoError(json.Unmarshal([]byte(gcsConnectorOutput), &gcsConnectorDetails), "Failed to parse GCS connector output")
+		a.Equal("RUNNING", gcsConnectorDetails["connector"].(map[string]interface{})["status"], "GCS connector is not running.")
+		a.Equal(gcsConnectorName, gcsConnectorDetails["connector"].(map[string]interface{})["name"], "GCS connector name in not correct.")
+
+		// GCS Connector class
+		var actualGCSConnectorClass string
+		for _, config := range gcsConnectorDetails["configs"].([]interface{}) {
+			configMap := config.(map[string]interface{})
+			if configMap["config"] == "connector.class" {
+				actualGCSConnectorClass = configMap["value"].(string)
+			}
+		}
+		a.Equal("GcsSink", actualGCSConnectorClass, "GCS Connector class is not 'GcsSink'")
+		log.Printf("Validated GCSsink connector '%s' and BigQuery connector '%s' successfully.", gcsSinkConnectorID, bigQueryConnectorID)
+
+		// Validate Topic Service Account name
+		log.Println("Validating service account name...")
+		serviceAccountsOutput := runCLICommand(t, "confluent", "iam", "service-account", "list", "-o", "json")
+		var serviceAccounts []map[string]interface{}
+		a.NoError(json.Unmarshal([]byte(serviceAccountsOutput), &serviceAccounts), "Failed to parse service accounts output")
+
+		for _, account := range serviceAccounts {
+			if account["name"] == adminServiceAccountName {
+				a.Equal(adminServiceAccountName, account["name"], "Admin service account name is not crrect.")
+				log.Printf("Admin service account '%s' validated successfully.", adminServiceAccountName)
+			} else if account["name"] == topicServiceAccountName {
+				a.Equal(topicServiceAccountName, account["name"], "Topic service account name is not crrect.")
+				log.Printf("Topic Service Account '%s' validated successfully.", topicServiceAccountName)
+			} else if account["name"] == connectorServiceAccountName {
+				a.Equal(connectorServiceAccountName, account["name"], "Connector service sccount name is not correct.")
+				log.Printf("Connector service account '%s' validated successfully.", connectorServiceAccountName)
+			}
+		}
+
+		log.Printf("All three service account names are correct.")
+
 		// Validate Total ACL Provision; Expecting a total of 10 ACLs:
 		// - 4 ACLs are created by the connector service account module.
 		// - 2 topics are being created, each generating 3 ACLs (read, write, and read from the connector).
 		expectedTotalACLCount := 10
-		ActualTotalACLCount := validateTotalKafkaACLCountWithCLI(t)
+		ActualTotalACLCount := validateTotalKafkaACLCount(t)
 		assert.Equal(t, expectedTotalACLCount, ActualTotalACLCount, fmt.Sprintf(
 			"Expected %d ACLs to be created, but found %d", expectedTotalACLCount, ActualTotalACLCount))
 
-		// Validate individual ACL combinations count (ResourceType and Operation)
-		individualExpectedACLs := []struct {
-			ResourceType string
-			Operation    string
-			Count        int
-		}{
-			{"GROUP", "READ", 1},
-			{"TOPIC", "CREATE", 1},
-			{"TOPIC", "WRITE", 3},
-			{"TOPIC", "READ", 4},
-			{"CLUSTER", "DESCRIBE", 1},
-		}
-		validateIndividualKafkaACLDetails(t, individualExpectedACLs)
+		// validateKafkaACL validates the Kafka ACL data for the specified topic and connector service accounts.
+		validateKafkaACL(t, topicServiceAccountID, connectorServiceAccountID)
 
-		// Validate Terraform outputs with confluent CLI
-		validateTerraformOutputWithCLI(t, envID, environmentName, kafkaClusterType, kafkaClusterID, kafkaClusterBasicName, bigQueryConnectorID, gcsSinkConnectorID, kafkaTopicName1, kafkaTopicName2, topicServiceAccountID)
 	})
 }
 
 // Logic to Validate Total ACL Provision via Confluent CLI
-func validateTotalKafkaACLCountWithCLI(t *testing.T) int {
+func validateTotalKafkaACLCount(t *testing.T) int {
 	output := runCLICommand(t, "confluent", "kafka", "acl", "list", "-o", "json")
-	log.Printf("Kafka ACL CLI Output: %s", output)
+	log.Printf("Kafka ACL array : %s", output)
+
+	a := assert.New(t)
 
 	var acls []map[string]interface{}
 	err := json.Unmarshal([]byte(output), &acls)
-	assert.NoError(t, err, "Failed to parse Kafka ACL JSON output")
+	a.NoError(err, "Failed to parse kafka ACL output")
 
 	aclCount := len(acls)
 	log.Printf("Actual ACL count: %d", aclCount)
 	return aclCount
 }
 
-// Logic to validate individual ACL combinations (ResourceType and Operation) via Confluent CLI
-func validateIndividualKafkaACLDetails(t *testing.T, expectedACLs []struct {
-	ResourceType string
-	Operation    string
-	Count        int
-}) {
-
-	output := runCLICommand(t, "confluent", "kafka", "acl", "list", "-o", "json")
-	var acls []map[string]interface{}
-	err := json.Unmarshal([]byte(output), &acls)
-	assert.NoError(t, err, "Failed to parse Kafka ACL JSON output")
-
-	// Count ACLs by ResourceType and Operation
-	actualCounts := make(map[string]int)
-	for _, acl := range acls {
-		key := fmt.Sprintf("%s|%s", acl["resource_type"], acl["operation"])
-		actualCounts[key]++
-	}
-
-	// Validate actual counts against expected values
-	for _, expected := range expectedACLs {
-		key := fmt.Sprintf("%s|%s", expected.ResourceType, expected.Operation)
-		actualCount := actualCounts[key]
-		assert.Equal(t, expected.Count, actualCount, fmt.Sprintf(
-			"Expected %d ACLs for ResourceType: %s, Operation: %s, but found %d",
-			expected.Count, expected.ResourceType, expected.Operation, actualCount,
-		))
-	}
-
-	log.Println("Individual ACL combination validation successful.")
-}
-
-// Logic to validate Terraform outputs with Confluent CLI
-func validateTerraformOutputWithCLI(t *testing.T, envID, environmentName, kafkaClusterType, kafkaClusterID, kafkaClusterBasicName, bigQueryConnectorID, gcsSinkConnectorID, kafkaTopicName1, kafkaTopicName2, topicServiceAccountID string) {
+// logic to validate the ACL data,It compares the actual ACL data obtained from the Kafka CLI against the expected ACL data
+// for both the topic and connector service accounts. If the data matches, the validation is successful.
+func validateKafkaACL(t *testing.T, topicServiceAccountID, connectorServiceAccountID string) {
 	a := assert.New(t)
 
-	// Validate Environment ID and Name
-	log.Println("Validating Environment ID and Name...")
-	envOutput := runCLICommand(t, "confluent", "env", "describe", envID, "-o", "json")
-	var envDetails map[string]interface{}
-	a.NoError(json.Unmarshal([]byte(envOutput), &envDetails), "Failed to parse environment details")
-	a.Equal(envID, envDetails["id"], "Environment ID mismatch")
-	a.Equal(environmentName, envDetails["name"], "Environment Name mismatch")
-	log.Printf("Validated Environment ID '%s' and Name '%s' successfully.", envID, environmentName)
-
-	// Validate Kafka Cluster ID and Basic Name
-	log.Println("Validating Kafka Cluster ID and Basic Name...")
-	clusterOutput := runCLICommand(t, "confluent", "kafka", "cluster", "describe", kafkaClusterID, "-o", "json")
-	var clusterDetails map[string]interface{}
-	a.NoError(json.Unmarshal([]byte(clusterOutput), &clusterDetails), "Failed to parse Kafka Cluster details")
-	a.Equal(kafkaClusterType, clusterDetails["type"], "Kafka Cluster type is not correct, it should be basic")
-	a.Equal(kafkaClusterBasicName, clusterDetails["name"], "Kafka Cluster Name is not same")
-	a.Equal("UP", clusterDetails["status"], "Kafka Cluster Status is not UP")
-	log.Printf("Validated Kafka Cluster Type '%s', Name '%s', and Status 'UP' successfully.", kafkaClusterID, kafkaClusterBasicName)
-
-	// Validate Kafka Topic Names
-	log.Println("Validating Kafka Topic Names...")
-	topicOutput := runCLICommand(t, "confluent", "kafka", "topic", "list", "-o", "json")
-	var topics []map[string]interface{}
-	a.NoError(json.Unmarshal([]byte(topicOutput), &topics), "Failed to parse Kafka Topics JSON output")
-	kafkaTopicNames := []string{kafkaTopicName1, kafkaTopicName2}
-
-	// Validate each topic exists in the CLI output
-	for _, expectedTopicName := range kafkaTopicNames {
-		found := false
-		for _, topic := range topics {
-			if topic["name"] == expectedTopicName {
-				found = true
-				break
-			}
-		}
-		a.True(found, fmt.Sprintf("Expected topic '%s' not found in Kafka Topics list", expectedTopicName))
-		log.Printf("Validated Kafka Topic '%s' successfully.", expectedTopicName)
+	expectedConnectorACLData := []map[string]interface{}{
+		{"principal": "User:" + connectorServiceAccountID, "permission": "ALLOW", "operation": "CREATE", "resource_type": "TOPIC", "resource_name": "dlq-lcc", "pattern_type": "PREFIXED"},
+		{"principal": "User:" + connectorServiceAccountID, "permission": "ALLOW", "operation": "DESCRIBE", "resource_type": "CLUSTER", "resource_name": "kafka-cluster", "pattern_type": "LITERAL"},
+		{"principal": "User:" + connectorServiceAccountID, "permission": "ALLOW", "operation": "READ", "resource_type": "GROUP", "resource_name": "connect-lcc", "pattern_type": "PREFIXED"},
+		{"principal": "User:" + connectorServiceAccountID, "permission": "ALLOW", "operation": "READ", "resource_type": "TOPIC", "resource_name": "squad_raw_service_example_1_entity", "pattern_type": "LITERAL"},
+		{"principal": "User:" + connectorServiceAccountID, "permission": "ALLOW", "operation": "READ", "resource_type": "TOPIC", "resource_name": "squad_raw_service_example_2_entity", "pattern_type": "LITERAL"},
+		{"principal": "User:" + connectorServiceAccountID, "permission": "ALLOW", "operation": "WRITE", "resource_type": "TOPIC", "resource_name": "dlq-lcc", "pattern_type": "PREFIXED"},
 	}
 
-	// Validate BigQuery Connector
-	bigQueryConnectorOutput := runCLICommand(t, "confluent", "connect", "cluster", "describe", bigQueryConnectorID, "-o", "json")
-	var bigQueryConnectorDetails map[string]interface{}
-	a.NoError(json.Unmarshal([]byte(bigQueryConnectorOutput), &bigQueryConnectorDetails), "Failed to parse BigQuery Connector JSON output")
-	a.Equal("RUNNING", bigQueryConnectorDetails["connector"].(map[string]interface{})["status"], "BigQuery Connector is not running")
-
-	// BigQuery Connector class
-	var actualBigQueryConnectorClass string
-	for _, config := range bigQueryConnectorDetails["configs"].([]interface{}) {
-		configMap := config.(map[string]interface{})
-		if configMap["config"] == "connector.class" {
-			actualBigQueryConnectorClass = configMap["value"].(string)
-			break
-		}
+	expectedTopicACLData := []map[string]interface{}{
+		{"principal": "User:" + topicServiceAccountID, "permission": "ALLOW", "operation": "READ", "resource_type": "TOPIC", "resource_name": "squad_raw_service_example_1_entity", "pattern_type": "LITERAL"},
+		{"principal": "User:" + topicServiceAccountID, "permission": "ALLOW", "operation": "READ", "resource_type": "TOPIC", "resource_name": "squad_raw_service_example_2_entity", "pattern_type": "LITERAL"},
+		{"principal": "User:" + topicServiceAccountID, "permission": "ALLOW", "operation": "WRITE", "resource_type": "TOPIC", "resource_name": "squad_raw_service_example_1_entity", "pattern_type": "LITERAL"},
+		{"principal": "User:" + topicServiceAccountID, "permission": "ALLOW", "operation": "WRITE", "resource_type": "TOPIC", "resource_name": "squad_raw_service_example_2_entity", "pattern_type": "LITERAL"},
 	}
-	a.Equal("BigQuerySink", actualBigQueryConnectorClass, "BigQuery Connector class is not 'BigQuerySink'")
 
-	// Validate GCS Sink Connector
-	gcsConnectorOutput := runCLICommand(t, "confluent", "connect", "cluster", "describe", gcsSinkConnectorID, "-o", "json")
-	var gcsConnectorDetails map[string]interface{}
-	a.NoError(json.Unmarshal([]byte(gcsConnectorOutput), &gcsConnectorDetails), "Failed to parse GCS Connector JSON output")
-	a.Equal("RUNNING", gcsConnectorDetails["connector"].(map[string]interface{})["status"], "GCS Connector is not running")
+	// Validate Topic ACL data
+	actualTopicACLOutput := runCLICommand(t, "confluent", "kafka", "acl", "list", "--service-account", topicServiceAccountID, "-o", "json")
+	var topicACLs []map[string]interface{}
+	err := json.Unmarshal([]byte(actualTopicACLOutput), &topicACLs)
+	a.NoError(err, "Failed to parse Kafka ACL JSON output")
+	a.Equal(expectedTopicACLData, topicACLs)
+	log.Printf("Successfully validated ACL data for topic service account: %s", topicServiceAccountID)
 
-	// GCS Connector class
-	var actualGCSConnectorClass string
-	for _, config := range gcsConnectorDetails["configs"].([]interface{}) {
-		configMap := config.(map[string]interface{})
-		if configMap["config"] == "connector.class" {
-			actualGCSConnectorClass = configMap["value"].(string)
-		}
-	}
-	a.Equal("GcsSink", actualGCSConnectorClass, "GCS Connector class is not 'GcsSink'")
-	log.Printf("Validated GCSSink Connector '%s' and BigQuery Connector '%s' successfully.", gcsSinkConnectorID, bigQueryConnectorID)
-
-	// Validate Topic Service Account ID
-	log.Println("Validating Topic Service Account ID...")
-	serviceAccountsOutput := runCLICommand(t, "confluent", "iam", "service-account", "list", "-o", "json")
-	var serviceAccounts []map[string]interface{}
-	a.NoError(json.Unmarshal([]byte(serviceAccountsOutput), &serviceAccounts), "Failed to parse Service Accounts JSON output")
-
-	serviceAccountFound := false
-	for _, serviceAccount := range serviceAccounts {
-		if serviceAccount["id"] == topicServiceAccountID {
-			serviceAccountFound = true
-			break
-		}
-	}
-	assert.True(t, serviceAccountFound, fmt.Sprintf("Topic Service Account ID '%s' not found in service account list", topicServiceAccountID))
-	log.Printf("Validated Topic Service Account ID '%s' successfully.", topicServiceAccountID)
+	// Validate Connector ACL Data
+	actualConnectorACLOutput := runCLICommand(t, "confluent", "kafka", "acl", "list", "--service-account", connectorServiceAccountID, "-o", "json")
+	var connectorACLs []map[string]interface{}
+	err = json.Unmarshal([]byte(actualConnectorACLOutput), &connectorACLs)
+	a.NoError(err, "Failed to parse Kafka ACL JSON output")
+	a.Equal(expectedConnectorACLData, connectorACLs)
+	log.Printf("Successfully validated ACL data for connector service account: %s", connectorServiceAccountID)
 }
 
 // Run a generic CLI command and return output

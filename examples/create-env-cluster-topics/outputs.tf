@@ -53,6 +53,11 @@ output "topic_service_account_id" {
   value       = module.kafka_topic_service_account.service_account_id
 }
 
+output "connector_service_account_id" {
+  description = "The ID of the service account associated with the Kafka topics."
+  value       = module.honest_labs_connector_service_account.service_account_id
+}
+
 output "topic_service_account_key" {
   description = "The Kafka API key for the service account."
   value       = module.kafka_topic_service_account.service_account_kafka_api_key
