@@ -90,7 +90,7 @@ func TestEnvClusterTopic(t *testing.T) {
 		runCLICommand(t, "confluent", "env", "use", envID)
 		runCLICommand(t, "confluent", "kafka", "cluster", "use", kafkaClusterID)
 
-		// Validate Environment name with the environmentName input value
+		// Validate Environment name
 		log.Println("Validating environment name...")
 		envOutput := runCLICommand(t, "confluent", "env", "describe", envID, "-o", "json")
 		var envDetails map[string]interface{}
@@ -145,6 +145,7 @@ func TestEnvClusterTopic(t *testing.T) {
 			}
 		}
 		a.Equal("BigQuerySink", actualBigQueryConnectorClass, "BigQuery connector class is not 'BigQuerySink'.")
+		log.Printf("Validated BigQuery sink connector class 'BigQuerySink', name '%s' and status 'RUNNING' successfully.", bigQueryConnectorName)
 
 		// Validate GCS Sink Connector
 		gcsConnectorOutput := runCLICommand(t, "confluent", "connect", "cluster", "describe", gcsSinkConnectorID, "-o", "json")
@@ -162,7 +163,7 @@ func TestEnvClusterTopic(t *testing.T) {
 			}
 		}
 		a.Equal("GcsSink", actualGCSConnectorClass, "GCS Connector class is not 'GcsSink'")
-		log.Printf("Validated GCSsink connector '%s' and BigQuery connector '%s' successfully.", gcsSinkConnectorID, bigQueryConnectorID)
+		log.Printf("Validated GCS sink connector class 'GcsSink', name '%s' and status 'RUNNING' successfully.", gcsConnectorName)
 
 		// Validate Topic Service Account name
 		log.Println("Validating service account name...")
@@ -215,7 +216,7 @@ func validateTotalKafkaACLCount(t *testing.T) int {
 	return aclCount
 }
 
-// logic to validate the ACL data,It compares the actual ACL data obtained from the Kafka CLI against the expected ACL data
+// logic to validate the ACL data, It compares the actual ACL data obtained from the Kafka CLI against the expected ACL data
 // for both the topic and connector service accounts. If the data matches, the validation is successful.
 func validateKafkaACL(t *testing.T, topicServiceAccountID, connectorServiceAccountID string) {
 	a := assert.New(t)
