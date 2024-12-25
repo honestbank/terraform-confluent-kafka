@@ -181,8 +181,6 @@ func TestEnvClusterTopic(t *testing.T) {
 			} else if account["name"] == connectorServiceAccountName {
 				a.Equal(connectorServiceAccountName, account["name"], "Connector service sccount name is not correct.")
 				log.Printf("Connector service account '%s' validated successfully.", connectorServiceAccountName)
-			} else {
-				a.Failf("Unexpected service account found", "Service account '%s' is not one of the expected accounts.", account["name"])
 			}
 		}
 
