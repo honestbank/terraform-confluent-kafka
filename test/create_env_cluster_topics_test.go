@@ -173,14 +173,17 @@ func TestEnvClusterTopic(t *testing.T) {
 
 		for _, account := range serviceAccounts {
 			if account["name"] == adminServiceAccountName {
-				a.Equal(adminServiceAccountName, account["name"], "Admin service account name is not crrect.")
+				a.Equal(adminServiceAccountName, account["name"], "Admin service account name is not correct.")
 				log.Printf("Admin service account '%s' validated successfully.", adminServiceAccountName)
 			} else if account["name"] == topicServiceAccountName {
-				a.Equal(topicServiceAccountName, account["name"], "Topic service account name is not crrect.")
+				a.Equal(topicServiceAccountName, account["name"], "Topic service account name is not correct.")
 				log.Printf("Topic Service Account '%s' validated successfully.", topicServiceAccountName)
 			} else if account["name"] == connectorServiceAccountName {
-				a.Equal(connectorServiceAccountName, account["name"], "Connector service sccount name is not correct.")
+				a.Equal(connectorServiceAccountName, account["name"], "Connector service account name is not correct.")
 				log.Printf("Connector service account '%s' validated successfully.", connectorServiceAccountName)
+			} else if account["name"] == "metrics-"+connectorServiceAccountName {
+				a.Equal("metrics-"+connectorServiceAccountName, account["name"], "Metrics service account name is not correct.")
+				log.Printf("Metrics service account '%s' validated successfully.", "metrics"+connectorServiceAccountName)
 			}
 		}
 

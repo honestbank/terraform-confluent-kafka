@@ -35,7 +35,7 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.8.5"
+          terraform_version: "1.9.0"
       - name: Install Confluent CLI
         run: |
           # Download and install Confluent CLI
