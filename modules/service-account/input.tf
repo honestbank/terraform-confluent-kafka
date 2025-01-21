@@ -64,19 +64,19 @@ variable "is_metrics_service_account" {
   default     = false
 }
 
-variable "cluster_crn" {
+variable "environment_crn" {
   type        = string
-  description = "The Confluent Resource Name of the Kafka cluster, for example, `crn://confluent.cloud/organization=1111aaaa-11aa-11aa-11aa-111111aaaaaa/environment=env-abc123/cloud-cluster=lkc-abc123`. This value cannot be blank if `is_metrics_service_account` is set to `true`"
+  description = "The Confluent Resource Name (CRN) of the environment, for example, `crn://confluent.cloud/organization=1111aaaa-11aa-11aa-11aa-111111aaaaaa/environment=env-abc123`. This value cannot be blank if `is_metrics_service_account` is set to `true`."
   default     = null
 
   validation {
     condition = (
       var.is_metrics_service_account == false || (
-        var.cluster_crn != null &&
-        var.cluster_crn != "" &&
-        can(regex("^crn://confluent.cloud/organization=[a-f0-9-]+/environment=env-[a-z0-9]+/cloud-cluster=lkc-[a-z0-9]+$", var.cluster_crn))
+        var.environment_crn != null &&
+        var.environment_crn != "" &&
+        can(regex("^crn://confluent.cloud/organization=[a-f0-9-]+/environment=env-[a-z0-9]+$", var.environment_crn))
       )
     )
-    error_message = "The 'cluster_crn' must be a valid Confluent Resource Name (CRN) in the format 'crn://confluent.cloud/organization=<UUID>/environment=env-<ID>/cloud-cluster=lkc-<ID>' and cannot be blank if 'is_metrics_service_account' is set to 'true'."
+    error_message = "The 'environment_crn' must be a valid Confluent Resource Name (CRN) in the format 'crn://confluent.cloud/organization=<UUID>/environment=env-<ID>' and cannot be blank if 'is_metrics_service_account' is set to 'true'."
   }
 }

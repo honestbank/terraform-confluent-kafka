@@ -31,5 +31,5 @@ resource "confluent_role_binding" "service_account_for_metrics" {
   count       = var.is_metrics_service_account ? 1 : 0
   principal   = "User:${confluent_service_account.service_account.id}"
   role_name   = "MetricsViewer"
-  crn_pattern = var.cluster_crn
+  crn_pattern = var.environment_crn
 }
