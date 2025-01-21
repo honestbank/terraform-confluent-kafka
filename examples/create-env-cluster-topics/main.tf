@@ -66,7 +66,7 @@ module "honest_labs_connector_metrics_service_account" {
   source                     = "../../modules/service-account"
   is_metrics_service_account = true
   service_account_name       = "metrics-${var.connector_service_account_name}"
-  cluster_crn                = module.honest_labs_kafka_cluster_basic.rbac_crn
+  environment_crn            = module.honest_labs_environment.environment_resource_name
 }
 
 module "honest_labs_connector_service_account_grant_permission" {
