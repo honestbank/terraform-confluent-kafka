@@ -3,15 +3,15 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
-| <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | >= 1.2.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9 |
+| <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | ~> 2.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.1.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_confluent"></a> [confluent](#provider\_confluent) | >= 1.2.0 |
+| <a name="provider_confluent"></a> [confluent](#provider\_confluent) | ~> 2.0 |
 
 ## Modules
 
@@ -30,9 +30,9 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_api_version"></a> [cluster\_api\_version](#input\_cluster\_api\_version) | API version of the Kafka cluster. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
-| <a name="input_cluster_crn"></a> [cluster\_crn](#input\_cluster\_crn) | The Confluent Resource Name of the Kafka cluster, for example, `crn://confluent.cloud/organization=1111aaaa-11aa-11aa-11aa-111111aaaaaa/environment=env-abc123/cloud-cluster=lkc-abc123`. This value cannot be blank if `is_metrics_service_account` is set to `true` | `string` | `null` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | The ID of the Kafka cluster. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
 | <a name="input_cluster_kind"></a> [cluster\_kind](#input\_cluster\_kind) | The kind of the Kafka cluster. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
+| <a name="input_environment_crn"></a> [environment\_crn](#input\_environment\_crn) | The Confluent Resource Name (CRN) of the environment, for example, `crn://confluent.cloud/organization=1111aaaa-11aa-11aa-11aa-111111aaaaaa/environment=env-abc123`. This value cannot be blank if `is_metrics_service_account` is set to `true`. | `string` | `null` | no |
 | <a name="input_environment_id"></a> [environment\_id](#input\_environment\_id) | The ID of the Confluent environment. This value cannot be blank if `is_metrics_service_account` is set to `false` | `string` | `null` | no |
 | <a name="input_is_metrics_service_account"></a> [is\_metrics\_service\_account](#input\_is\_metrics\_service\_account) | Set this value to true if you want to create a service account for metrics export else false | `bool` | `false` | no |
 | <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | The name of the service account | `string` | n/a | yes |

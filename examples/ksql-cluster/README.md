@@ -23,7 +23,9 @@ export TF_VAR_google_credentials=$(op item get 'https://start.1password.com/open
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | ~> 2.0 |
 
 ## Providers
 

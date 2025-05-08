@@ -16,13 +16,13 @@ This module builds a Confluent Cloud ksqlDB cluster based on the [`confluent_ksq
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
-| <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | >= 1.16.0 |
+| <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | ~> 2.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_confluent"></a> [confluent](#provider\_confluent) | >= 1.16.0 |
+| <a name="provider_confluent"></a> [confluent](#provider\_confluent) | ~> 2.0 |
 
 ## Modules
 
