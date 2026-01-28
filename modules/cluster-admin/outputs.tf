@@ -10,12 +10,12 @@ output "admin_service_account_id" {
 
 output "admin_kafka_api_key" {
   description = "Kafka API Key to manage kafka resources - topics, ACL on topics"
-  value       = confluent_api_key.admin_kafka_api_key.id
+  value       = try(confluent_api_key.admin_kafka_api_key[0].id, "")
 }
 
 output "admin_kafka_api_secret" {
   description = "Kafka API Secret to manage kafka resources - topics, ACL on topics"
-  value       = confluent_api_key.admin_kafka_api_key.secret
+  value       = try(confluent_api_key.admin_kafka_api_key[0].secret, "")
   sensitive   = true
 }
 

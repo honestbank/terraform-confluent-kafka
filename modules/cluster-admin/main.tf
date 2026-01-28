@@ -10,12 +10,16 @@ resource "confluent_role_binding" "admin_environment" {
 }
 
 resource "confluent_role_binding" "admin_cluster" {
+  count = var.cluster_id == "" ? 0 : 1
+
   principal   = "User:${confluent_service_account.admin.id}"
   role_name   = "CloudClusterAdmin"
   crn_pattern = var.cluster_rbac_crn
 }
 
 resource "confluent_api_key" "admin_kafka_api_key" {
+  count = var.cluster_id == "" ? 0 : 1
+
   display_name = "${confluent_service_account.admin.display_name}-kafka-api-key"
   description  = "Kafka API Key that is owned by '${confluent_service_account.admin.display_name}' service account"
 
