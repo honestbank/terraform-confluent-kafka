@@ -30,6 +30,21 @@ resource "confluent_kafka_topic" "topic" {
     "retention.ms"                        = var.retention_ms
     "retention.bytes"                     = var.retention_bytes
   }
+
+  lifecycle {
+    ignore_changes = [
+      config["confluent.key.schema.validation"],
+      config["confluent.key.subject.name.strategy"],
+      config["confluent.schema.validation.context.name"],
+      config["confluent.value.schema.validation"],
+      config["confluent.value.subject.name.strategy"],
+      config["message.timestamp.after.max.ms"],
+      config["message.timestamp.before.max.ms"],
+      config["min.insync.replicas"],
+      config["segment.bytes"],
+      config["segment.ms"],
+    ]
+  }
 }
 
 resource "confluent_kafka_acl" "kafka_acl_write" {
