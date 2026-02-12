@@ -1,6 +1,6 @@
 module github.com/honestbank/terraform-confluent-kafka
 
-go 1.23
+go 1.26
 
 require (
 	github.com/gruntwork-io/terratest v0.47.2
