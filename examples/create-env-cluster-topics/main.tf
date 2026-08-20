@@ -35,6 +35,7 @@ module "cluster_admin_privilege_service_account" {
   admin_service_account_name = var.admin_service_account_name
   cluster_api_version        = module.honest_labs_kafka_cluster_basic.cluster_api_version
   cluster_id                 = module.honest_labs_kafka_cluster_basic.kafka_cluster_id
+  create_cluster_resources   = true
   cluster_kind               = module.honest_labs_kafka_cluster_basic.cluster_kind
   cluster_rbac_crn           = module.honest_labs_kafka_cluster_basic.rbac_crn
   environment_id             = module.honest_labs_environment.environment_id
