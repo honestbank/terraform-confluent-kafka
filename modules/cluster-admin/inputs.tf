@@ -32,3 +32,9 @@ variable "environment_id" {
   type        = string
   description = "The ID of the environment"
 }
+
+variable "create_cluster_resources" {
+  type        = bool
+  description = "Create the cluster role binding and the Kafka API key. Set this value explicitly when cluster_id is not known until apply, because Terraform cannot derive resource counts from apply-time values."
+  default     = null
+}
