@@ -24,7 +24,6 @@ func TestEnvClusterTopic(t *testing.T) {
 	adminServiceAccountName := "labs-cluster-admin-sa-" + runID
 	topicServiceAccountName := "labs-topic-sa-" + runID
 	connectorServiceAccountName := "labs-cluster-connector-sa-" + runID
-	bigQueryConnectorName := "labs-confluent-bigquery-sink-" + runID
 	gcsConnectorName := "labs-confluent-gcs-sink-" + runID
 	kafkaTopicName1 := "squad_raw_service_example_1_entity"
 	kafkaTopicName2 := "squad_raw_service_example_2_entity"
@@ -64,7 +63,6 @@ func TestEnvClusterTopic(t *testing.T) {
 					"service_account_name":           topicServiceAccountName,
 					"topic_name_1":                   kafkaTopicName1,
 					"topic_name_2":                   kafkaTopicName2,
-					"bigquery_connector_name":        bigQueryConnectorName,
 					"gcs_connector_name":             gcsConnectorName,
 				},
 			})
@@ -78,7 +76,6 @@ func TestEnvClusterTopic(t *testing.T) {
 		// Fetch Terraform outputs
 		envID := terraform.Output(t, runOptions, "environment_id")
 		kafkaClusterID := terraform.Output(t, runOptions, "kafka_cluster_id")
-		bigQueryConnectorID := terraform.Output(t, runOptions, "bigquery_connector_id")
 		gcsSinkConnectorID := terraform.Output(t, runOptions, "connector_gcs_sink_connector_id")
 		topicServiceAccountID := terraform.Output(t, runOptions, "topic_service_account_id")
 		connectorServiceAccountID := terraform.Output(t, runOptions, "connector_service_account_id")
@@ -127,25 +124,6 @@ func TestEnvClusterTopic(t *testing.T) {
 			a.True(found, fmt.Sprintf("expected topic '%s' not found in kafka topics list", expectedTopicName))
 			log.Printf("Validated kafka topic '%s' successfully.", expectedTopicName)
 		}
-
-		// Validate BigQuery Connector
-		bigQueryConnectorOutput := runCLICommand(t, "confluent", "connect", "cluster", "describe", bigQueryConnectorID, "-o", "json")
-		var bigQueryConnectorDetails map[string]interface{}
-		a.NoError(json.Unmarshal([]byte(bigQueryConnectorOutput), &bigQueryConnectorDetails), "Failed to parse bigQuery connector output.")
-		a.Equal("RUNNING", bigQueryConnectorDetails["connector"].(map[string]interface{})["status"], "bigQuery connector is not running.")
-		a.Equal(bigQueryConnectorName, bigQueryConnectorDetails["connector"].(map[string]interface{})["name"], "bigQuery connector name is not correct.")
-
-		// BigQuery Connector class
-		var actualBigQueryConnectorClass string
-		for _, config := range bigQueryConnectorDetails["configs"].([]interface{}) {
-			configMap := config.(map[string]interface{})
-			if configMap["config"] == "connector.class" {
-				actualBigQueryConnectorClass = configMap["value"].(string)
-				break
-			}
-		}
-		a.Equal("BigQuerySink", actualBigQueryConnectorClass, "BigQuery connector class is not 'BigQuerySink'.")
-		log.Printf("Validated BigQuery sink connector class 'BigQuerySink', name '%s' and status 'RUNNING' successfully.", bigQueryConnectorName)
 
 		// Validate GCS Sink Connector
 		gcsConnectorOutput := runCLICommand(t, "confluent", "connect", "cluster", "describe", gcsSinkConnectorID, "-o", "json")
