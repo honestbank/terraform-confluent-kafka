@@ -21,7 +21,7 @@ variable "confluent_cloud_password" {
 }
 
 variable "create_bigquery_sink" {
-  default     = true
+  default     = false
   description = "Controls the creation of the BigQuery sink module."
   type        = bool
 }
