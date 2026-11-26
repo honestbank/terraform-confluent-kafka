@@ -42,7 +42,7 @@ jobs:
       - name: Install Confluent CLI
         run: |
           # Download and install Confluent CLI
-          curl -sL --http1.1 https://cnfl.io/cli | sh -s -- v3.64.3 -b ./bin
+          curl -sL --http1.1 https://cnfl.io/cli | sh -s -- v3.65.0 -b ./bin
           # Add ./bin to PATH
           echo "Adding ./bin to PATH"
           echo "$PWD/bin" >> $GITHUB_PATH
